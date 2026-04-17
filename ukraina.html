@@ -728,10 +728,30 @@ const ALPHA=[
   {l:'Я',s:'я',tr:'ya',snd:'ya comme dans "yak"',tip:'Voyelle composée',ex:[{w:'я',t:'ya',f:'je'}]},
 ];
 
+function saveData(){
+  try{
+    localStorage.setItem('uk_known',JSON.stringify([...known]));
+    localStorage.setItem('uk_xp',xp);
+    localStorage.setItem('uk_anki_done',ankiDoneToday);
+  }catch(e){}
+}
+function loadData(){
+  try{
+    const k=localStorage.getItem('uk_known');
+    if(k)known=new Set(JSON.parse(k));
+    const x=localStorage.getItem('uk_xp');
+    if(x)xp=parseInt(x)||0;
+    const a=localStorage.getItem('uk_anki_done');
+    if(a)ankiDoneToday=parseInt(a)||0;
+  }catch(e){}
+}
+
 let known=new Set(),xp=0,ankiSession=[],ankiIdx=0,ankiFlipped=false,ankiDoneToday=0;
 let selCat='Tous',selPhrCat='Tous',selVerb=0,selTense='pres';
 let qCur=0,qArr=[],qCorrect=0,qAns=false;
 const pages=['home','vocab','quiz','anki','phrases','conj','alpha'];
+
+loadData();
 
 function haptic(){try{if(navigator.vibrate)navigator.vibrate(10);}catch(e){}}
 function go(id){
@@ -748,7 +768,7 @@ function go(id){
   if(id==='alpha')renderAlpha();
   if(id==='vocab')renderVocab();
 }
-function addXP(n){xp+=n;updateAll();}
+function addXP(n){xp+=n;saveData();updateAll();}
 function updateAll(){
   const kc=known.size;
   document.getElementById('kc').textContent=kc;
@@ -779,7 +799,7 @@ function renderVocab(){
 }
 function toggleKnown(i){
   if(known.has(i))known.delete(i);else{known.add(i);addXP(2);}
-  renderVocab();updateAll();
+  saveData();renderVocab();updateAll();
 }
 function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
 function startQuiz(){
@@ -871,7 +891,7 @@ function rateAnki(r){
   ankiDoneToday++;
   if(r===0){const c=ankiSession.splice(ankiIdx,1)[0];ankiSession.splice(Math.min(ankiIdx+3,ankiSession.length),0,c);}
   else{if(r>=2)known.add(VOCAB.indexOf(ankiSession[ankiIdx]));ankiIdx++;}
-  updateAll();showAnkiCard();
+  updateAll();saveData();showAnkiCard();
 }
 function resetAnki(){initAnki();}
 function renderPhrases(){
