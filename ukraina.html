@@ -223,6 +223,13 @@ body{font-family:-apple-system,'SF Pro Text','Inter',system-ui,sans-serif;color:
 .aex-ua{font-size:15px;font-weight:600;min-width:80px;}
 .aex-tr{font-size:12px;color:var(--acc4);font-style:italic;min-width:70px;}
 .aex-fr{font-size:13px;color:var(--muted);}
+.speak-btn{
+  width:32px;height:32px;border-radius:50%;border:none;
+  background:rgba(10,132,255,.15);color:#0A84FF;
+  font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:transform .1s,background .15s;font-family:system-ui;
+}
+.speak-btn:active{transform:scale(.85);background:rgba(10,132,255,.3);}
 </style>
 </head>
 <body>
@@ -330,6 +337,7 @@ body{font-family:-apple-system,'SF Pro Text','Inter',system-ui,sans-serif;color:
       <div class="anki-card" id="anki-card" onclick="flipAnki()">
         <div class="anki-ua" id="af-ua"></div>
         <div class="anki-tr" id="af-tr"></div>
+        <button class="speak-btn" id="anki-speak" onclick="speak(document.getElementById('af-ua').textContent,event)" style="margin:10px auto 0">🔊</button>
         <div class="anki-back" id="anki-back">
           <div class="anki-fr" id="af-fr"></div>
           <div class="anki-cat" id="af-cat"></div>
@@ -786,20 +794,37 @@ function renderVocab(){
   const list=selCat==='Tous'?VOCAB:VOCAB.filter(v=>v.cat===selCat);
   document.getElementById('vgrid').innerHTML=list.map(w=>{
     const i=VOCAB.indexOf(w),k=known.has(i);
-    return `<div class="wcard ${k?'known':''}" onclick="toggleKnown(${i})">
-      <div class="wleft">
+    const ua=w.ua.replace(/'/g,"\\'");
+    return `<div class="wcard ${k?'known':''}">
+      <div class="wleft" onclick="toggleKnown(${i})">
         <span class="tag tag-${w.lvl}">${w.lvl.toUpperCase()}</span>
         <div class="wua" style="margin-top:4px">${w.ua}</div>
         <div class="wtr">${w.tr}</div>
         <div class="wfr">${w.fr}</div>
       </div>
-      <div class="wchk">${k?'✓':''}</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <button class="speak-btn" onclick="speak('${ua}',event)" title="Écouter">🔊</button>
+        <div class="wchk" onclick="toggleKnown(${i})">${k?'✓':''}</div>
+      </div>
     </div>`;
   }).join('');
 }
 function toggleKnown(i){
   if(known.has(i))known.delete(i);else{known.add(i);addXP(2);}
   saveData();renderVocab();updateAll();
+}
+function speak(text,e){
+  if(e)e.stopPropagation();
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='uk-UA';u.rate=0.85;u.pitch=1;
+  // Cherche une voix ukrainienne, sinon voix russe ou slave
+  const voices=window.speechSynthesis.getVoices();
+  const v=voices.find(v=>v.lang==='uk-UA')||voices.find(v=>v.lang.startsWith('uk'))||voices.find(v=>v.lang==='ru-RU')||null;
+  if(v)u.voice=v;
+  window.speechSynthesis.speak(u);
+  haptic();
 }
 function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
 function startQuiz(){
@@ -869,6 +894,7 @@ function showAnkiCard(){
   const c=ankiSession[ankiIdx];
   ankiFlipped=false;
   document.getElementById('af-ua').textContent=c.ua;
+  document.getElementById('af-ua').onclick=()=>speak(c.ua);
   document.getElementById('af-tr').textContent=c.tr;
   document.getElementById('af-fr').textContent=c.fr;
   document.getElementById('af-cat').textContent=c.cat+' · '+c.lvl.toUpperCase();
@@ -898,13 +924,21 @@ function renderPhrases(){
   const cats=['Tous',...new Set(PHRASES.map(p=>p.cat))];
   document.getElementById('phr-cats').innerHTML=cats.map(c=>`<button class="pill ${c===selPhrCat?'on':''}" onclick="selPhrCat='${c}';renderPhrases()">${c}</button>`).join('');
   const list=selPhrCat==='Tous'?PHRASES:PHRASES.filter(p=>p.cat===selPhrCat);
-  document.getElementById('phr-grid').innerHTML=list.map(p=>`<div class="phr-card" onclick="this.classList.toggle('open')">
-    <span class="tag tag-${p.lvl}" style="margin-bottom:8px;display:inline-block">${p.lvl.toUpperCase()}</span>
-    <div class="phr-ua">${p.ua}</div>
-    <div class="phr-tr">${p.tr}</div>
-    <div class="phr-fr">${p.fr}</div>
+  document.getElementById('phr-grid').innerHTML=list.map(p=>{
+    const ua=p.ua.replace(/'/g,"\\'");
+    return `<div class="phr-card" onclick="this.classList.toggle('open')">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+      <div style="flex:1">
+        <span class="tag tag-${p.lvl}" style="margin-bottom:8px;display:inline-block">${p.lvl.toUpperCase()}</span>
+        <div class="phr-ua">${p.ua}</div>
+        <div class="phr-tr">${p.tr}</div>
+        <div class="phr-fr">${p.fr}</div>
+      </div>
+      <button class="speak-btn" onclick="speak('${ua}',event)" style="margin-top:24px;flex-shrink:0">🔊</button>
+    </div>
     <div class="phr-note">${p.note}</div>
-  </div>`).join('');
+  </div>`;
+  }).join('');
 }
 function renderConj(){
   document.getElementById('verb-sel').innerHTML=VERBS.map((v,i)=>`<button class="vbtn ${i===selVerb?'on':''}" onclick="selVerb=${i};renderConj()">${v.inf}</button>`).join('');
