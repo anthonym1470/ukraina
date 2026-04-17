@@ -382,11 +382,12 @@ body{font-family:-apple-system,'SF Pro Text','Inter',system-ui,sans-serif;color:
     <div class="adetail" id="adetail">
       <div style="display:flex;align-items:flex-end;gap:14px;margin-bottom:12px">
         <div class="abig" id="abig"></div>
-        <div>
+        <div style="flex:1">
           <div style="font-size:13px;color:var(--muted);margin-bottom:2px" id="asmall"></div>
           <div style="font-size:13px;color:var(--acc);font-weight:500" id="asnd"></div>
           <div style="font-size:11px;color:var(--muted);margin-top:3px" id="atip"></div>
         </div>
+        <button class="speak-btn" onclick="speak(document.getElementById('abig').textContent,event)" style="flex-shrink:0;margin-bottom:4px">🔊</button>
       </div>
       <div id="aexs"></div>
     </div>
@@ -846,6 +847,11 @@ function renderQ(){
   document.getElementById('qbadge').textContent=mode==='ua'?'UA → FR':'FR → UA';
   document.getElementById('qq').textContent=mode==='ua'?q.ua:q.fr;
   document.getElementById('qhint').textContent=mode==='ua'?q.tr:'';
+  // Bouton son sur la question si c'est de l'ukrainien
+  const qcard=document.querySelector('.qcard');
+  let spkBtn=qcard.querySelector('.q-speak');
+  if(!spkBtn){spkBtn=document.createElement('button');spkBtn.className='speak-btn q-speak';spkBtn.style.margin='12px auto 0';spkBtn.textContent='🔊';qcard.appendChild(spkBtn);}
+  spkBtn.onclick=(e)=>{e.stopPropagation();speak(mode==='ua'?q.ua:q.fr);};
   const wrongs=shuffle(VOCAB.filter(v=>v.fr!==q.fr)).slice(0,3);
   const opts=shuffle([q,...wrongs]);
   document.getElementById('qopts').innerHTML=opts.map(o=>{
@@ -946,9 +952,21 @@ function renderConj(){
   document.getElementById('tense-pills').innerHTML=tenses.map(t=>`<button class="pill ${t.k===selTense?'on':''}" onclick="selTense='${t.k}';renderConj()">${t.l}</button>`).join('');
   const v=VERBS[selVerb],rows=v[selTense];
   document.getElementById('conj-wrap').innerHTML=`
-    <div class="conj-head"><h3>${v.inf}</h3><span>${v.fr}</span></div>
+    <div class="conj-head">
+      <h3>${v.inf}</h3>
+      <span>${v.fr}</span>
+      <button class="speak-btn" onclick="speak('${v.inf.replace(/'/g,"\\'")}',event)" style="margin-left:auto">🔊</button>
+    </div>
     <table class="conj-table"><tbody>
-    ${rows.map(r=>`<tr><td class="cpro">${r.pro}</td><td><div class="cua">${r.ua}</div><div class="ctr">${r.tr}</div></td></tr>`).join('')}
+    ${rows.map(r=>`<tr>
+      <td class="cpro">${r.pro}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div><div class="cua">${r.ua}</div><div class="ctr">${r.tr}</div></div>
+          <button class="speak-btn" onclick="speak('${r.ua.replace(/'/g,"\\'")}',event)" style="margin-left:auto;flex-shrink:0">🔊</button>
+        </div>
+      </td>
+    </tr>`).join('')}
     </tbody></table>
     <div class="conj-note">${v.note}</div>`;
 }
@@ -963,7 +981,13 @@ function showLetter(i){
   document.getElementById('asmall').textContent=a.s+' · '+a.tr;
   document.getElementById('asnd').textContent=a.snd;
   document.getElementById('atip').textContent=a.tip;
-  document.getElementById('aexs').innerHTML=a.ex.map(e=>`<div class="aex"><div class="aex-ua">${e.w}</div><div class="aex-tr">${e.t}</div><div class="aex-fr">${e.f}</div></div>`).join('');
+  document.getElementById('aexs').innerHTML=a.ex.map(e=>`
+    <div class="aex">
+      <div class="aex-ua">${e.w}</div>
+      <div class="aex-tr">${e.t}</div>
+      <div class="aex-fr" style="flex:1">${e.f}</div>
+      <button class="speak-btn" onclick="speak('${e.w.replace(/'/g,"\\'")}',event)">🔊</button>
+    </div>`).join('');
   document.getElementById('adetail').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 renderVocab();renderAlpha();updateAll();
