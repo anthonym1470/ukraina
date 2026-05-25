@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Французька">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Французька — Вчити французьку</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj48cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgcng9IjI2IiBmaWxsPSIjMTExMTEzIi8+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjEyMCIgcng9IjAiIGZpbGw9IiMwMDI0OTUiLz48cmVjdCB4PSI0MCIgeT0iMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjEyMCIgZmlsbD0id2hpdGUiLz48cmVjdCB4PSI4MCIgeT0iMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iI0VEMjkzOSIvPjwvc3ZnPg==">
+<style>
+:root{
+  --bg:#000000;--surf:#1c1c1e;--surf2:#2c2c2e;--surf3:#3a3a3c;
+  --acc:#ED2939;--acc2:#0055A4;--acc3:#30D158;--acc4:#FF9F0A;--accw:#ffffff;
+  --text:#FFFFFF;--text2:#EBEBF5;--muted:rgba(235,235,245,0.6);--muted2:rgba(235,235,245,0.3);
+  --danger:#FF453A;--brd:rgba(255,255,255,0.08);
+  --safe-top:env(safe-area-inset-top);--safe-bot:env(safe-area-inset-bottom);
+  --radius:12px;--radius-lg:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
+html,body{height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:-apple-system,'SF Pro Text',system-ui,sans-serif;color:var(--text);overscroll-behavior:none;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;background:var(--bg);}
+.topbar{padding:calc(var(--safe-top) + 8px) 20px 10px;background:rgba(0,0,0,0.85);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-bottom:0.5px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.brand{font-size:17px;font-weight:700;letter-spacing:-.5px;color:var(--text);display:flex;align-items:center;gap:6px;}
+.xp-badge{background:var(--surf2);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--acc4);letter-spacing:.2px;}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.page{display:none;padding:16px;padding-bottom:calc(var(--safe-bot) + 84px);}
+.page.on{display:block;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.bottomnav{flex-shrink:0;display:flex;background:rgba(28,28,30,0.92);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-top:0.5px solid rgba(255,255,255,0.12);padding-bottom:calc(var(--safe-bot) + 2px);}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 2px 5px;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:-apple-system,system-ui,sans-serif;transition:color .2s,transform .1s;}
+.bnav-item:active{transform:scale(.92);}
+.bnav-item.on{color:var(--acc2);}
+.bnav-ico{font-size:22px;margin-bottom:2px;line-height:1;display:block;}
+.bnav-lbl{font-size:9px;font-weight:500;letter-spacing:.2px;}
+.bnav-dot{width:4px;height:4px;border-radius:50%;background:var(--acc2);margin:1px auto 0;opacity:0;}
+.bnav-item.on .bnav-dot{opacity:1;}
+
+/* COMMON */
+.section-title{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;margin-top:24px;padding:0 2px;}
+.section-title:first-child{margin-top:0;}
+.pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.pills::-webkit-scrollbar{display:none;}
+.pill{flex-shrink:0;padding:6px 14px;border-radius:20px;border:0.5px solid var(--brd);cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);background:var(--surf2);font-family:-apple-system,system-ui,sans-serif;transition:all .2s;}
+.pill:active{transform:scale(.95);}
+.pill.on{background:var(--acc2);border-color:var(--acc2);color:#fff;}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;letter-spacing:.5px;text-transform:uppercase;}
+.tag-a1{background:rgba(48,209,88,.15);color:#30D158;}
+.tag-a2{background:rgba(10,132,255,.15);color:#0A84FF;}
+.tag-b1{background:rgba(255,214,10,.15);color:#FFD60A;}
+.tag-b2{background:rgba(255,69,58,.15);color:#FF453A;}
+.speak-btn{width:32px;height:32px;border-radius:50%;border:none;background:rgba(237,41,57,.15);color:#ED2939;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .1s,background .15s;font-family:system-ui;}
+.speak-btn:active{transform:scale(.85);background:rgba(237,41,57,.3);}
+
+/* HOME */
+.hero{background:linear-gradient(135deg,rgba(0,85,164,.2),rgba(237,41,57,.1));border:0.5px solid rgba(0,85,164,.3);border-radius:var(--radius-lg);padding:18px;margin-bottom:16px;}
+.hero-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;}
+.hero-flag{font-size:32px;line-height:1;}
+.hero-info{flex:1;}
+.hero-info h2{font-size:17px;font-weight:700;margin-bottom:3px;letter-spacing:-.3px;}
+.hero-info p{font-size:13px;color:var(--muted);}
+.hero-kc{text-align:right;font-size:12px;color:var(--muted);line-height:1.6;}
+.hero-kc strong{display:block;font-size:26px;font-weight:700;color:var(--acc4);line-height:1;letter-spacing:-1px;}
+.pbar{height:4px;background:var(--surf2);border-radius:4px;overflow:hidden;}
+.pfill{height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.cards2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.mcard{background:var(--surf);border:0.5px solid var(--brd);border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:transform .15s,opacity .15s;}
+.mcard:active{transform:scale(.96);opacity:.85;}
+.mcard-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.mcard-ico{font-size:24px;}
+.mcard-badge{font-size:10px;font-weight:600;color:var(--muted);background:var(--surf2);padding:3px 8px;border-radius:20px;}
+.mcard-ttl{font-size:14px;font-weight:600;margin-bottom:3px;letter-spacing:-.2px;}
+.mcard-sub{font-size:12px;color:var(--muted);}
+.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.scard{background:var(--surf);border:0.5px solid var(--brd);border-radius:var(--radius-lg);padding:14px;text-align:center;}
+.snum{font-size:26px;font-weight:700;letter-spacing:-1px;}
+.slbl{font-size:10px;font-weight:500;color:var(--muted);margin-top:3px;letter-spacing:.3px;}
+.hrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.hrow-title{font-size:20px;font-weight:700;letter-spacing:-.5px;}
+.hrow-sub{font-size:13px;color:var(--muted);}
+
+/* VOCAB */
+.vlist{display:flex;flex-direction:column;gap:8px;}
+.wcard{background:var(--surf);border:0.5px solid var(--brd);border-radius:var(--radius-lg);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:transform .15s,border-color .2s;}
+.wcard.known{border-color:rgba(48,209,88,.35);background:rgba(48,209,88,.04);}
+.wcard:active{transform:scale(.98);}
+.wleft{flex:1;min-width:0;}
+.wfr{font-size:17px;font-weight:600;margin-bottom:1px;letter-spacing:-.2px;}
+.wpr{font-size:12px;color:var(--acc);font-style:italic;margin-bottom:4px;}
+.wua{font-size:13px;color:var(--muted);}
+.wchk{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--surf3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all .2s;}
+.wcard.known .wchk{background:var(--acc3);border-color:var(--acc3);color:#fff;}
+
+/* QUIZ */
+.qprog{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.qbar{flex:1;height:4px;background:var(--surf2);border-radius:4px;overflow:hidden;}
+.qbf{height:100%;background:var(--acc2);border-radius:4px;transition:width .4s cubic-bezier(.4,0,.2,1);}
+.qnum{font-size:12px;color:var(--muted);font-weight:600;}
+.qscore{font-size:12px;color:var(--acc3);font-weight:700;}
+.qcard{background:var(--surf);border:0.5px solid var(--brd);border-radius:var(--radius-lg);padding:28px 20px;margin-bottom:16px;text-align:center;}
+.qbadge{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:4px 12px;border-radius:20px;background:rgba(0,85,164,.2);color:#4d90d4;margin-bottom:16px;}
+.qq{font-size:32px;font-weight:700;margin-bottom:8px;line-height:1.2;letter-spacing:-.5px;}
+.qhint{font-size:13px;color:var(--muted);font-style:italic;}
+.qopts{display:flex;flex-direction:column;gap:8px;}
+.qopt{background:var(--surf);border:0.5px solid var(--brd);border-radius:var(--radius-lg);padding:15px 18px;cursor:pointer;font-size:15px;font-weight:500;text-align:left;color:var(--text);font-family:-apple-system,system-ui,sans-serif;width:100%;transition:transform .1s,border-color .2s;}
+.qopt:active:not([disabled]){transform:scale(.97);}
+.qopt.ok{border-color:var(--acc3);background:rgba(48,209,88,.1);color:var(--acc3);}
+.qopt.no{border-color:var(--danger);background:rgba(255,69,58,.1);color:var(--danger);}
+.qfb{text-align:center;padding:12px 16px;border-radius:var(--radius);margin:10px 0;font-size:13px;font-weight:500;display:none;}
+.qfb.show{display:block;}
+.qfb.g{background:rgba(48,209,88,.12);color:var(--acc3);}
+.qfb.b{background:rgba(255,69,58,.12);color:var(--danger);}
+.qnext-btn{width:100%;padding:15px;border-radius:var(--radius-lg);border:none;background:var(--acc2);color:#fff;font-family:-apple-system,system-ui,sans-serif;font-size:15px;font-weight:600;cursor:pointer;display:none;margin-top:8px;transition:opacity .15s,transform .1s;}
+.qnext-btn.show{display:block;}
+.qnext-btn:active{opacity:.85;transform:scale(.98);}
+.qres{text-align:center;padding:40px 20px;}
+.rsc{font-size:64px;font-weight:700;margin-bottom:8px;letter-spacing:-2px;}
+.rsc span{color:var(--muted);font-size:36px;font-weight:400;}
+.rmsg{font-size:15px;color:var(--muted);margin-bottom:32px;}
+.btn-outline{padding:14px 32px;border-radius:var(--radius-lg);border:0.5px solid var(--brd);background:var(--surf);color:var(--text);font-family:-apple-system,system-ui,sans-serif;font-size:15px;font-weight:600;cursor:pointer;}
+.btn-outline:active{opacity:.7;}
+
+/* ANKI */
+.anki-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.ast{background:var(--surf);border:0.5px solid var(--brd);border-radius:var(--radius-lg);padding:14px;text-align:center;}
+.astn{font-size:24px;font-weight:700;letter-spacing:-.5px;}
+.astl{font-size:10px;font-weight:500;color:var(--muted);margin-top:3px;letter-spacing:.3px;}
+.anki-card{background:var(--surf);border:0.5px solid var(--brd);border-radius:var(--radius-lg);padding:36px 24px;text-align:center;cursor:pointer;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:14px;transition:transform .15s;}
+.anki-card:active{transform:scale(.97);}
+.anki-fr{font-size:38px;font-weight:700;letter-spacing:-.5px;}
+.anki-pr{font-size:13px;color:var(--acc);font-style:italic;margin-top:8px;}
+.anki-back{display:none;margin-top:16px;border-top:0.5px solid var(--brd);padding-top:16px;width:100%;animation:fadeIn .2s ease;}
+.anki-back.show{display:block;}
+.anki-ua{font-size:22px;font-weight:600;}
+.anki-cat{font-size:12px;color:var(--muted);margin-top:6px;}
+.anki-hint{text-align:center;font-size:13px;color:var(--muted);margin-bottom:12px;}
+.anki-btns{display:none;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.anki-btns.show{display:grid;}
+.anki-btn{padding:13px 4px;border-radius:var(--radius-lg);border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:-apple-system,system-ui,sans-serif;transition:transform .1s;}
+.anki-btn:active{transform:scale(.95);}
+.anki-btn.again{background:rgba(255,69,58,.18);color:#FF453A;}
+.anki-btn.hard{background:rgba(255,214,10,.18);color:#FFD60A;}
+.anki-btn.good{background:rgba(48,209,88,.18);color:#30D158;}
+.anki-btn.easy{background:rgba(0,85,164,.18);color:#4d90d4;}
+.anki-queue{font-size:12px;color:var(--muted);text-align:center;font-weight:500;}
+.anki-done{text-align:center;padding:48px 24px;}
+.anki-done h3{font-size:20px;font-weight:700;margin-bottom:10px;}
+
+/* PHRASES */
+.phr-list{display:flex;flex-direction:column;gap:8px;}
+.phr-card{background:var(--surf);border:0.5px solid var(--brd);border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:transform .15s,border-color .2s;}
+.phr-card:active{transform:scale(.98);}
+.phr-card.open{border-color:rgba(237,41,57,.25);background:rgba(237,41,57,.04);}
+.phr-fr{font-size:16px;font-weight:600;margin-bottom:4px;letter-spacing:-.2px;}
+.phr-pr{font-size:12px;color:var(--acc);font-style:italic;margin-bottom:5px;}
+.phr-ua{font-size:13px;color:var(--muted);}
+.phr-note{font-size:12px;color:#4d90d4;margin-top:12px;padding-top:12px;border-top:0.5px solid var(--brd);display:none;font-weight:500;}
+.phr-card.open .phr-note{display:block;}
+
+/* CONJ */
+.verb-scroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.verb-scroll::-webkit-scrollbar{display:none;}
+.vbtn{flex-shrink:0;padding:7px 16px;border-radius:20px;border:0.5px solid var(--brd);cursor:pointer;font-size:13px;font-weight:500;background:var(--surf2);color:var(--muted);font-family:-apple-system,system-ui,sans-serif;transition:all .2s;}
+.vbtn:active{transform:scale(.95);}
+.vbtn.on{background:var(--acc2);border-color:var(--acc2);color:#fff;}
+.conj-wrap{background:var(--surf);border:0.5px solid var(--brd);border-radius:var(--radius-lg);overflow:hidden;}
+.conj-head{padding:16px;border-bottom:0.5px solid var(--brd);display:flex;align-items:center;gap:10px;}
+.conj-head h3{font-size:20px;font-weight:700;letter-spacing:-.5px;}
+.conj-head span{font-size:13px;color:var(--muted);}
+.conj-table{width:100%;border-collapse:collapse;}
+.conj-table td{padding:12px 16px;border-bottom:0.5px solid var(--brd);vertical-align:top;}
+.conj-table tr:last-child td{border-bottom:none;}
+.cpro{font-size:12px;color:var(--muted);font-weight:600;padding-right:10px;white-space:nowrap;width:25%;}
+.cfr{font-size:16px;font-weight:600;}
+.cpr{font-size:11px;color:var(--acc);font-style:italic;margin-top:2px;}
+.conj-note{padding:14px 16px;font-size:12px;color:#4d90d4;border-top:0.5px solid var(--brd);font-weight:500;background:rgba(0,85,164,.06);}
+
+/* ALPHA — sons français */
+.agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px;}
+.acard{background:var(--surf);border:0.5px solid var(--brd);border-radius:var(--radius);padding:12px 4px;text-align:center;cursor:pointer;transition:transform .15s,border-color .2s;}
+.acard:active{transform:scale(.92);}
+.acard.sel{border-color:var(--acc);background:rgba(237,41,57,.08);}
+.aletter{font-size:18px;font-weight:700;}
+.atrans{font-size:10px;color:var(--muted);margin-top:2px;font-weight:500;}
+.adetail{background:var(--surf);border:0.5px solid var(--brd);border-radius:var(--radius-lg);padding:18px;display:none;}
+.adetail.show{display:block;animation:fadeIn .2s ease;}
+.abig{font-size:48px;font-weight:700;line-height:1;}
+.aex{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:0.5px solid var(--brd);}
+.aex:last-child{border-bottom:none;}
+.aex-fr{font-size:15px;font-weight:600;min-width:80px;}
+.aex-pr{font-size:12px;color:var(--acc);font-style:italic;min-width:70px;}
+.aex-ua{font-size:13px;color:var(--muted);flex:1;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="topbar">
+  <div class="brand"><span>🇫🇷</span> Французька</div>
+  <div class="xp-badge" id="xp-lbl">0 XP</div>
+</div>
+
+<div class="content">
+
+  <!-- ГОЛОВНА -->
+  <div class="page on" id="page-home">
+    <div class="hero">
+      <div class="hero-top">
+        <div class="hero-flag">🇫🇷</div>
+        <div class="hero-info">
+          <h2>Рівень A1 → Мета B2</h2>
+          <p>Загальний прогрес</p>
+          <div class="pbar" style="margin-top:6px"><div class="pfill" id="gp" style="width:5%"></div></div>
+        </div>
+        <div class="hero-kc"><strong id="kc">0</strong>слів вивчено</div>
+      </div>
+    </div>
+    <div class="section-title">Модулі</div>
+    <div class="cards2">
+      <div class="mcard" onclick="go('vocab')">
+        <div class="mcard-top"><div class="mcard-ico">📚</div><div class="mcard-badge">300+ слів</div></div>
+        <div class="mcard-ttl">Словник</div><div class="mcard-sub">A1 → B2 за темами</div>
+      </div>
+      <div class="mcard" onclick="go('quiz')">
+        <div class="mcard-top"><div class="mcard-ico">⚡</div><div class="mcard-badge">Практика</div></div>
+        <div class="mcard-ttl">Тест</div><div class="mcard-sub">10 питань</div>
+      </div>
+      <div class="mcard" onclick="go('anki')">
+        <div class="mcard-top"><div class="mcard-ico">🔄</div><div class="mcard-badge">SRS</div></div>
+        <div class="mcard-ttl">Повторення</div><div class="mcard-sub">Метод Анкі</div>
+      </div>
+      <div class="mcard" onclick="go('phrases')">
+        <div class="mcard-top"><div class="mcard-ico">💬</div><div class="mcard-badge">80+ фраз</div></div>
+        <div class="mcard-ttl">Фрази</div><div class="mcard-sub">Реальні ситуації</div>
+      </div>
+      <div class="mcard" onclick="go('conj')">
+        <div class="mcard-top"><div class="mcard-ico">📝</div><div class="mcard-badge">20 дієслів</div></div>
+        <div class="mcard-ttl">Відмінювання</div><div class="mcard-sub">Теперішній · Минулий · Майбутній</div>
+      </div>
+      <div class="mcard" onclick="go('sounds')">
+        <div class="mcard-top"><div class="mcard-ico">🔤</div><div class="mcard-badge">30 звуків</div></div>
+        <div class="mcard-ttl">Вимова</div><div class="mcard-sub">Французькі звуки</div>
+      </div>
+    </div>
+    <div class="section-title">Статистика</div>
+    <div class="stats3">
+      <div class="scard"><div class="snum" id="s1">0</div><div class="slbl">Слів вивчено</div></div>
+      <div class="scard"><div class="snum" id="s2">0</div><div class="slbl">Анкі зроблено</div></div>
+      <div class="scard"><div class="snum" id="s3">0</div><div class="slbl">XP всього</div></div>
+    </div>
+  </div>
+
+  <!-- СЛОВНИК -->
+  <div class="page" id="page-vocab">
+    <div class="hrow">
+      <div class="hrow-title">Словник</div>
+      <div class="hrow-sub"><span id="vkc">0</span> / <span id="vtot"></span> вивчено</div>
+    </div>
+    <div class="pills" id="vpills"></div>
+    <div class="vlist" id="vgrid"></div>
+  </div>
+
+  <!-- ТЕСТ -->
+  <div class="page" id="page-quiz">
+    <div id="qmain">
+      <div class="qprog">
+        <div class="qbar"><div class="qbf" id="qbf" style="width:0%"></div></div>
+        <div class="qnum" id="qn">0 / 10</div>
+        <div class="qscore" id="qsl">0 ✓</div>
+      </div>
+      <div class="qcard">
+        <div class="qbadge" id="qbadge">УКР → ФР</div>
+        <div class="qq" id="qq">—</div>
+        <div class="qhint" id="qhint"></div>
+      </div>
+      <div class="qopts" id="qopts"></div>
+      <div class="qfb" id="qfb"></div>
+      <button class="qnext-btn" id="qnext" onclick="nextQ()">Наступне питання</button>
+    </div>
+    <div class="qres" id="qres" style="display:none">
+      <div class="rsc" id="rsc"></div>
+      <div class="rmsg" id="rmsg"></div>
+      <button class="btn-outline" onclick="startQuiz()">Почати знову</button>
+    </div>
+  </div>
+
+  <!-- ПОВТОРЕННЯ -->
+  <div class="page" id="page-anki">
+    <div class="anki-stats">
+      <div class="ast"><div class="astn" id="an-due">0</div><div class="astl">До повторення</div></div>
+      <div class="ast"><div class="astn" id="an-new">0</div><div class="astl">Нові</div></div>
+      <div class="ast"><div class="astn" id="an-done">0</div><div class="astl">Зроблено</div></div>
+    </div>
+    <div id="anki-main">
+      <div class="anki-card" id="anki-card" onclick="flipAnki()">
+        <div class="anki-fr" id="af-fr"></div>
+        <div class="anki-pr" id="af-pr"></div>
+        <button class="speak-btn" id="anki-speak" onclick="speak(document.getElementById('af-fr').textContent,event)" style="margin:10px auto 0">🔊</button>
+        <div class="anki-back" id="anki-back">
+          <div class="anki-ua" id="af-ua"></div>
+          <div class="anki-cat" id="af-cat"></div>
+        </div>
+      </div>
+      <div class="anki-hint" id="anki-hint">Натисніть на картку, щоб побачити відповідь</div>
+      <div class="anki-btns" id="anki-btns">
+        <button class="anki-btn again" onclick="rateAnki(0)">Ще раз<br><span style="font-size:10px;opacity:.6">&lt;1 хв</span></button>
+        <button class="anki-btn hard" onclick="rateAnki(1)">Важко<br><span style="font-size:10px;opacity:.6">1 день</span></button>
+        <button class="anki-btn good" onclick="rateAnki(2)">Добре<br><span style="font-size:10px;opacity:.6">3 дні</span></button>
+        <button class="anki-btn easy" onclick="rateAnki(3)">Легко<br><span style="font-size:10px;opacity:.6">7 днів</span></button>
+      </div>
+      <div class="anki-queue" id="anki-queue"></div>
+    </div>
+    <div class="anki-done" id="anki-done" style="display:none">
+      <div style="font-size:40px;margin-bottom:12px">✓</div>
+      <h3>Сесію завершено</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Повертайтесь завтра для наступного повторення.</p>
+      <button class="btn-outline" onclick="resetAnki()">Нова сесія</button>
+    </div>
+  </div>
+
+  <!-- ФРАЗИ -->
+  <div class="page" id="page-phrases">
+    <div class="hrow"><div class="hrow-title">Корисні фрази</div></div>
+    <div class="pills" id="phr-cats"></div>
+    <div class="phr-list" id="phr-grid"></div>
+  </div>
+
+  <!-- ВІДМІНЮВАННЯ -->
+  <div class="page" id="page-conj">
+    <div class="hrow"><div class="hrow-title">Відмінювання</div></div>
+    <div class="verb-scroll" id="verb-sel"></div>
+    <div class="pills" id="tense-pills"></div>
+    <div class="conj-wrap" id="conj-wrap"></div>
+  </div>
+
+  <!-- ВИМОВА -->
+  <div class="page" id="page-sounds">
+    <div class="hrow"><div class="hrow-title">Французька вимова</div></div>
+    <div class="agrid" id="agrid"></div>
+    <div class="adetail" id="adetail">
+      <div style="display:flex;align-items:flex-end;gap:14px;margin-bottom:12px">
+        <div class="abig" id="abig"></div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;margin-bottom:2px" id="asmall"></div>
+          <div style="font-size:13px;color:var(--acc);font-weight:500" id="asnd"></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px" id="atip"></div>
+        </div>
+        <button class="speak-btn" onclick="speakEx(document.getElementById('abig').textContent)" style="flex-shrink:0;margin-bottom:4px">🔊</button>
+      </div>
+      <div id="aexs"></div>
+    </div>
+  </div>
+
+</div>
+
+<nav class="bottomnav">
+  <button class="bnav-item on" id="bnav-home" onclick="go('home')"><div class="bnav-ico">🏠</div><div class="bnav-lbl">Головна</div><div class="bnav-dot"></div></button>
+  <button class="bnav-item" id="bnav-vocab" onclick="go('vocab')"><div class="bnav-ico">📚</div><div class="bnav-lbl">Словник</div><div class="bnav-dot"></div></button>
+  <button class="bnav-item" id="bnav-quiz" onclick="go('quiz')"><div class="bnav-ico">⚡</div><div class="bnav-lbl">Тест</div><div class="bnav-dot"></div></button>
+  <button class="bnav-item" id="bnav-anki" onclick="go('anki')"><div class="bnav-ico">🔄</div><div class="bnav-lbl">Анкі</div><div class="bnav-dot"></div></button>
+  <button class="bnav-item" id="bnav-phrases" onclick="go('phrases')"><div class="bnav-ico">💬</div><div class="bnav-lbl">Фрази</div><div class="bnav-dot"></div></button>
+  <button class="bnav-item" id="bnav-conj" onclick="go('conj')"><div class="bnav-ico">📝</div><div class="bnav-lbl">Дієслова</div><div class="bnav-dot"></div></button>
+  <button class="bnav-item" id="bnav-sounds" onclick="go('sounds')"><div class="bnav-ico">🔤</div><div class="bnav-lbl">Вимова</div><div class="bnav-dot"></div></button>
+</nav>
+</div>
+
+<script>
+const VOCAB=[
+  // Привітання
+  {fr:'bonjour',pr:'bonjur',ua:'добрий день / привіт',cat:'Привітання',lvl:'a1'},
+  {fr:'bonsoir',pr:'bonsuar',ua:'добрий вечір',cat:'Привітання',lvl:'a1'},
+  {fr:'bonne nuit',pr:'бон нюї',ua:'на добраніч',cat:'Привітання',lvl:'a1'},
+  {fr:'salut',pr:'салю',ua:'привіт (неформально)',cat:'Привітання',lvl:'a1'},
+  {fr:'au revoir',pr:'о ревуар',ua:'до побачення',cat:'Привітання',lvl:'a1'},
+  {fr:'merci',pr:'мерсі',ua:'дякую',cat:'Привітання',lvl:'a1'},
+  {fr:'s\'il vous plaît',pr:'сіль ву пле',ua:'будь ласка (офіційно)',cat:'Привітання',lvl:'a1'},
+  {fr:'s\'il te plaît',pr:'сіль те пле',ua:'будь ласка (неформально)',cat:'Привітання',lvl:'a1'},
+  {fr:'excusez-moi',pr:'екскюзе муа',ua:'вибачте',cat:'Привітання',lvl:'a1'},
+  {fr:'pardon',pr:'пардон',ua:'перепрошую',cat:'Привітання',lvl:'a1'},
+  {fr:'oui',pr:'уї',ua:'так',cat:'Привітання',lvl:'a1'},
+  {fr:'non',pr:'нон',ua:'ні',cat:'Привітання',lvl:'a1'},
+  {fr:'de rien',pr:'де р\'єн',ua:'будь ласка / нема за що',cat:'Привітання',lvl:'a1'},
+  {fr:'comment allez-vous ?',pr:'коман тале ву',ua:'як справи ? (офіційно)',cat:'Привітання',lvl:'a1'},
+  {fr:'ça va ?',pr:'са ва',ua:'як справи ? (неформально)',cat:'Привітання',lvl:'a1'},
+  {fr:'très bien',pr:'тре б\'єн',ua:'дуже добре',cat:'Привітання',lvl:'a1'},
+  // Числа
+  {fr:'zéro',pr:'зеро',ua:'нуль',cat:'Числа',lvl:'a1'},
+  {fr:'un / une',pr:'ен / юн',ua:'один / одна',cat:'Числа',lvl:'a1'},
+  {fr:'deux',pr:'дьо',ua:'два',cat:'Числа',lvl:'a1'},
+  {fr:'trois',pr:'труа',ua:'три',cat:'Числа',lvl:'a1'},
+  {fr:'quatre',pr:'катр',ua:'чотири',cat:'Числа',lvl:'a1'},
+  {fr:'cinq',pr:'сенк',ua:'п\'ять',cat:'Числа',lvl:'a1'},
+  {fr:'six',pr:'сіс',ua:'шість',cat:'Числа',lvl:'a1'},
+  {fr:'sept',pr:'сет',ua:'сім',cat:'Числа',lvl:'a1'},
+  {fr:'huit',pr:'юіт',ua:'вісім',cat:'Числа',lvl:'a1'},
+  {fr:'neuf',pr:'нев',ua:'дев\'ять',cat:'Числа',lvl:'a1'},
+  {fr:'dix',pr:'діс',ua:'десять',cat:'Числа',lvl:'a1'},
+  {fr:'vingt',pr:'ван',ua:'двадцять',cat:'Числа',lvl:'a1'},
+  {fr:'trente',pr:'трант',ua:'тридцять',cat:'Числа',lvl:'a1'},
+  {fr:'cent',pr:'сан',ua:'сто',cat:'Числа',lvl:'a1'},
+  {fr:'mille',pr:'міль',ua:'тисяча',cat:'Числа',lvl:'a2'},
+  {fr:'premier / première',pr:'премьє / премьєр',ua:'перший / перша',cat:'Числа',lvl:'a2'},
+  // Їжа та напої
+  {fr:'l\'eau',pr:'ло',ua:'вода',cat:'Їжа',lvl:'a1'},
+  {fr:'le pain',pr:'ле пен',ua:'хліб',cat:'Їжа',lvl:'a1'},
+  {fr:'le café',pr:'ле кафе',ua:'кава',cat:'Їжа',lvl:'a1'},
+  {fr:'le thé',pr:'ле те',ua:'чай',cat:'Їжа',lvl:'a1'},
+  {fr:'le lait',pr:'ле ле',ua:'молоко',cat:'Їжа',lvl:'a1'},
+  {fr:'la viande',pr:'ля в\'янд',ua:'м\'ясо',cat:'Їжа',lvl:'a1'},
+  {fr:'le poisson',pr:'ле пуасон',ua:'риба',cat:'Їжа',lvl:'a1'},
+  {fr:'l\'œuf',pr:'лев',ua:'яйце',cat:'Їжа',lvl:'a1'},
+  {fr:'le fromage',pr:'ле фромаж',ua:'сир',cat:'Їжа',lvl:'a1'},
+  {fr:'le beurre',pr:'ле бер',ua:'масло',cat:'Їжа',lvl:'a1'},
+  {fr:'le sucre',pr:'ле сюкр',ua:'цукор',cat:'Їжа',lvl:'a1'},
+  {fr:'le sel',pr:'ле сель',ua:'сіль',cat:'Їжа',lvl:'a1'},
+  {fr:'la soupe',pr:'ля суп',ua:'суп',cat:'Їжа',lvl:'a1'},
+  {fr:'la salade',pr:'ля салад',ua:'салат',cat:'Їжа',lvl:'a1'},
+  {fr:'les légumes',pr:'ле легюм',ua:'овочі',cat:'Їжа',lvl:'a1'},
+  {fr:'les fruits',pr:'ле фрюї',ua:'фрукти',cat:'Їжа',lvl:'a1'},
+  {fr:'la pomme',pr:'ля пом',ua:'яблуко',cat:'Їжа',lvl:'a1'},
+  {fr:'la tomate',pr:'ля томат',ua:'помідор',cat:'Їжа',lvl:'a1'},
+  {fr:'le vin',pr:'ле ван',ua:'вино',cat:'Їжа',lvl:'a2'},
+  {fr:'la bière',pr:'ля б\'єр',ua:'пиво',cat:'Їжа',lvl:'a2'},
+  {fr:'le restaurant',pr:'ле ресторан',ua:'ресторан',cat:'Їжа',lvl:'a1'},
+  {fr:'l\'addition',pr:'ладіссьон',ua:'рахунок',cat:'Їжа',lvl:'a2'},
+  // Місця
+  {fr:'la maison',pr:'ля мезон',ua:'будинок',cat:'Місця',lvl:'a1'},
+  {fr:'l\'appartement',pr:'лапартеман',ua:'квартира',cat:'Місця',lvl:'a1'},
+  {fr:'la ville',pr:'ля віль',ua:'місто',cat:'Місця',lvl:'a1'},
+  {fr:'la rue',pr:'ля рю',ua:'вулиця',cat:'Місця',lvl:'a1'},
+  {fr:'le parc',pr:'ле парк',ua:'парк',cat:'Місця',lvl:'a1'},
+  {fr:'l\'école',pr:'лекол',ua:'школа',cat:'Місця',lvl:'a1'},
+  {fr:'l\'université',pr:'люніверсіте',ua:'університет',cat:'Місця',lvl:'a1'},
+  {fr:'l\'hôpital',pr:'лопіталь',ua:'лікарня',cat:'Місця',lvl:'a1'},
+  {fr:'la pharmacie',pr:'ля фармасі',ua:'аптека',cat:'Місця',lvl:'a1'},
+  {fr:'le magasin',pr:'ле мажазен',ua:'магазин',cat:'Місця',lvl:'a1'},
+  {fr:'la banque',pr:'ля банк',ua:'банк',cat:'Місця',lvl:'a1'},
+  {fr:'la gare',pr:'ля гар',ua:'залізничний вокзал',cat:'Місця',lvl:'a1'},
+  {fr:'l\'aéroport',pr:'лаеропор',ua:'аеропорт',cat:'Місця',lvl:'a2'},
+  {fr:'la bibliothèque',pr:'ля бібліотек',ua:'бібліотека',cat:'Місця',lvl:'a2'},
+  {fr:'le musée',pr:'ле мюзе',ua:'музей',cat:'Місця',lvl:'a2'},
+  // Транспорт
+  {fr:'le bus',pr:'ле бюс',ua:'автобус',cat:'Транспорт',lvl:'a1'},
+  {fr:'le métro',pr:'ле метро',ua:'метро',cat:'Транспорт',lvl:'a1'},
+  {fr:'le taxi',pr:'ле таксі',ua:'таксі',cat:'Транспорт',lvl:'a1'},
+  {fr:'le train',pr:'ле тран',ua:'поїзд',cat:'Транспорт',lvl:'a1'},
+  {fr:'l\'avion',pr:'лав\'он',ua:'літак',cat:'Транспорт',lvl:'a1'},
+  {fr:'la voiture',pr:'ля вуатюр',ua:'автомобіль',cat:'Транспорт',lvl:'a1'},
+  {fr:'le vélo',pr:'ле вело',ua:'велосипед',cat:'Транспорт',lvl:'a1'},
+  {fr:'le ticket',pr:'ле тіке',ua:'квиток',cat:'Транспорт',lvl:'a2'},
+  // Час
+  {fr:'aujourd\'hui',pr:'ожурдюї',ua:'сьогодні',cat:'Час',lvl:'a1'},
+  {fr:'demain',pr:'деман',ua:'завтра',cat:'Час',lvl:'a1'},
+  {fr:'hier',pr:''єр',ua:'вчора',cat:'Час',lvl:'a1'},
+  {fr:'maintenant',pr:'ментенан',ua:'зараз',cat:'Час',lvl:'a1'},
+  {fr:'toujours',pr:'тужур',ua:'завжди',cat:'Час',lvl:'a1'},
+  {fr:'jamais',pr:'жаме',ua:'ніколи',cat:'Час',lvl:'a1'},
+  {fr:'souvent',pr:'суван',ua:'часто',cat:'Час',lvl:'a2'},
+  {fr:'parfois',pr:'парфуа',ua:'іноді',cat:'Час',lvl:'a2'},
+  {fr:'la minute',pr:'ля мінют',ua:'хвилина',cat:'Час',lvl:'a1'},
+  {fr:'l\'heure',pr:'лер',ua:'година',cat:'Час',lvl:'a1'},
+  {fr:'le jour',pr:'ле жур',ua:'день',cat:'Час',lvl:'a1'},
+  {fr:'la semaine',pr:'ля семен',ua:'тиждень',cat:'Час',lvl:'a1'},
+  {fr:'le mois',pr:'ле муа',ua:'місяць',cat:'Час',lvl:'a1'},
+  {fr:'l\'année',pr:'лане',ua:'рік',cat:'Час',lvl:'a1'},
+  {fr:'lundi',pr:'ленді',ua:'понеділок',cat:'Час',lvl:'a2'},
+  {fr:'mardi',pr:'марді',ua:'вівторок',cat:'Час',lvl:'a2'},
+  {fr:'mercredi',pr:'меркреді',ua:'середа',cat:'Час',lvl:'a2'},
+  {fr:'jeudi',pr:'жеді',ua:'четвер',cat:'Час',lvl:'a2'},
+  {fr:'vendredi',pr:'вандреді',ua:'п\'ятниця',cat:'Час',lvl:'a2'},
+  {fr:'samedi',pr:'самді',ua:'субота',cat:'Час',lvl:'a2'},
+  {fr:'dimanche',pr:'діманш',ua:'неділя',cat:'Час',lvl:'a2'},
+  {fr:'le printemps',pr:'ле пренtan',ua:'весна',cat:'Час',lvl:'a2'},
+  {fr:'l\'été',pr:'лете',ua:'літо',cat:'Час',lvl:'a2'},
+  {fr:'l\'automne',pr:'лотон',ua:'осінь',cat:'Час',lvl:'a2'},
+  {fr:'l\'hiver',pr:'лівер',ua:'зима',cat:'Час',lvl:'a2'},
+  // Сім\'я
+  {fr:'la mère',pr:'ля мер',ua:'мати',cat:'Сім\'я',lvl:'a1'},
+  {fr:'le père',pr:'ле пер',ua:'батько',cat:'Сім\'я',lvl:'a1'},
+  {fr:'le frère',pr:'ле фрер',ua:'брат',cat:'Сім\'я',lvl:'a1'},
+  {fr:'la sœur',pr:'ля сер',ua:'сестра',cat:'Сім\'я',lvl:'a1'},
+  {fr:'l\'enfant',pr:'лanfan',ua:'дитина',cat:'Сім\'я',lvl:'a1'},
+  {fr:'le fils',pr:'ле фіс',ua:'син',cat:'Сім\'я',lvl:'a1'},
+  {fr:'la fille',pr:'ля фій',ua:'донька',cat:'Сім\'я',lvl:'a1'},
+  {fr:'le grand-père',pr:'ле гран-пер',ua:'дідусь',cat:'Сім\'я',lvl:'a1'},
+  {fr:'la grand-mère',pr:'ля гран-мер',ua:'бабуся',cat:'Сім\'я',lvl:'a1'},
+  {fr:'l\'oncle',pr:'лонкль',ua:'дядько',cat:'Сім\'я',lvl:'a2'},
+  {fr:'la tante',pr:'ля тант',ua:'тітка',cat:'Сім\'я',lvl:'a2'},
+  {fr:'le mari',pr:'ле марі',ua:'чоловік',cat:'Сім\'я',lvl:'a2'},
+  {fr:'la femme',pr:'ля фам',ua:'дружина / жінка',cat:'Сім\'я',lvl:'a2'},
+  {fr:'l\'ami / l\'amie',pr:'ламі',ua:'друг / подруга',cat:'Сім\'я',lvl:'a1'},
+  // Прикметники
+  {fr:'grand / grande',pr:'гран / гранд',ua:'великий / велика',cat:'Прикметники',lvl:'a1'},
+  {fr:'petit / petite',pr:'петі / петіт',ua:'маленький / маленька',cat:'Прикметники',lvl:'a1'},
+  {fr:'beau / belle',pr:'бо / бель',ua:'гарний / гарна',cat:'Прикметники',lvl:'a1'},
+  {fr:'bon / bonne',pr:'бон / бон',ua:'хороший / хороша',cat:'Прикметники',lvl:'a1'},
+  {fr:'nouveau / nouvelle',pr:'нуво / нувель',ua:'новий / нова',cat:'Прикметники',lvl:'a1'},
+  {fr:'vieux / vieille',pr:'в\'є / в\'єй',ua:'старий / стара',cat:'Прикметники',lvl:'a1'},
+  {fr:'jeune',pr:'жен',ua:'молодий / молода',cat:'Прикметники',lvl:'a1'},
+  {fr:'rapide',pr:'рапід',ua:'швидкий',cat:'Прикметники',lvl:'a2'},
+  {fr:'lent / lente',pr:'лан / лант',ua:'повільний',cat:'Прикметники',lvl:'a2'},
+  {fr:'cher / chère',pr:'шер / шер',ua:'дорогий',cat:'Прикметники',lvl:'a2'},
+  {fr:'facile',pr:'фасіль',ua:'легкий / простий',cat:'Прикметники',lvl:'a2'},
+  {fr:'difficile',pr:'діфісіль',ua:'важкий / складний',cat:'Прикметники',lvl:'a2'},
+  {fr:'intéressant',pr:'ентересан',ua:'цікавий',cat:'Прикметники',lvl:'a2'},
+  {fr:'important',pr:'enporan',ua:'важливий',cat:'Прикметники',lvl:'b1'},
+  // Займенники
+  {fr:'je',pr:'же',ua:'я',cat:'Займенники',lvl:'a1'},
+  {fr:'tu',pr:'тю',ua:'ти (неформально)',cat:'Займенники',lvl:'a1'},
+  {fr:'il / elle',pr:'іль / ель',ua:'він / вона',cat:'Займенники',lvl:'a1'},
+  {fr:'nous',pr:'ну',ua:'ми',cat:'Займенники',lvl:'a1'},
+  {fr:'vous',pr:'ву',ua:'ви (офіційно або множина)',cat:'Займенники',lvl:'a1'},
+  {fr:'ils / elles',pr:'іль / ель',ua:'вони (ч. / ж.)',cat:'Займенники',lvl:'a1'},
+  {fr:'mon / ma',pr:'мон / ма',ua:'мій / моя',cat:'Займенники',lvl:'a1'},
+  {fr:'ton / ta',pr:'тон / та',ua:'твій / твоя',cat:'Займенники',lvl:'a1'},
+  {fr:'son / sa',pr:'сон / са',ua:'його / її',cat:'Займенники',lvl:'a2'},
+  // B1-B2
+  {fr:'la liberté',pr:'ля ліберте',ua:'свобода',cat:'B1–B2',lvl:'b1'},
+  {fr:'la société',pr:'ля сосьєте',ua:'суспільство',cat:'B1–B2',lvl:'b1'},
+  {fr:'l\'éducation',pr:'лeдюкасьон',ua:'освіта',cat:'B1–B2',lvl:'b1'},
+  {fr:'la loi',pr:'ля луа',ua:'закон',cat:'B1–B2',lvl:'b1'},
+  {fr:'le gouvernement',pr:'ле гуверноман',ua:'уряд',cat:'B1–B2',lvl:'b1'},
+  {fr:'la technologie',pr:'ля текнолоші',ua:'технологія',cat:'B1–B2',lvl:'b1'},
+  {fr:'l\'économie',pr:'лeконоmі',ua:'економіка',cat:'B1–B2',lvl:'b1'},
+  {fr:'la culture',pr:'ля кюльтюр',ua:'культура',cat:'B1–B2',lvl:'b1'},
+  {fr:'la science',pr:'ля сьянс',ua:'наука',cat:'B1–B2',lvl:'b1'},
+  {fr:'l\'environnement',pr:'ланвіронман',ua:'навколишнє середовище',cat:'B1–B2',lvl:'b2'},
+  {fr:'le changement climatique',pr:'ле шанжман клімітік',ua:'зміна клімату',cat:'B1–B2',lvl:'b2'},
+  {fr:'les droits de l\'homme',pr:'ле друа де лом',ua:'права людини',cat:'B1–B2',lvl:'b2'},
+  {fr:'la démocratie',pr:'ля демокрасі',ua:'демократія',cat:'B1–B2',lvl:'b2'},
+];
+
+const PHRASES=[
+  {fr:'Je m\'appelle ...',pr:'же мапель...',ua:'Мене звуть ...',cat:'Знайомство',note:'Основна фраза для представлення'},
+  {fr:'J\'ai ... ans',pr:'же ... ан',ua:'Мені ... років',cat:'Знайомство',note:'Вік: J\'ai vingt ans = мені 20 років'},
+  {fr:'Je viens d\'Ukraine',pr:'же в\'єн дюкрен',ua:'Я з України',cat:'Знайомство',note:'"venir de" = приїхати з'},
+  {fr:'J\'apprends le français',pr:'же напран ле франсе',ua:'Я вчу французьку',cat:'Знайомство',note:'Відмінна фраза для початку розмови'},
+  {fr:'Enchanté(e)',pr:'аншанте',ua:'Дуже приємно',cat:'Знайомство',note:'Чол. / Жін. — однаково звучить'},
+  {fr:'Où se trouve ... ?',pr:'у се труv ...',ua:'Де знаходиться ... ?',cat:'Орієнтування',note:'Напр.: Où se trouve la gare ?'},
+  {fr:'Tournez à gauche / droite',pr:'турне а гош / друат',ua:'Поверніть ліворуч / праворуч',cat:'Орієнтування',note:'Gauche = ліворуч, droite = праворуч'},
+  {fr:'Allez tout droit',pr:'але ту друа',ua:'Йдіть прямо',cat:'Орієнтування',note:'Щоб вказати напрямок'},
+  {fr:'C\'est combien ?',pr:'се комб\'єн',ua:'Скільки це коштує ?',cat:'Покупки',note:'Основне питання у магазині'},
+  {fr:'Je voudrais ...',pr:'же вудре',ua:'Я б хотів(ла) ...',cat:'Покупки',note:'Ввічлива форма замовлення'},
+  {fr:'Avez-vous ... ?',pr:'аве ву',ua:'У вас є ... ?',cat:'Покупки',note:'У магазині або ресторані'},
+  {fr:'L\'addition, s\'il vous plaît',pr:'ладісьон сіль ву пле',ua:'Рахунок, будь ласка',cat:'Ресторан',note:'У кінці обіду в ресторані'},
+  {fr:'Je suis végétarien(ne)',pr:'же сюї вежетарьєн',ua:'Я вегетаріанець / вегетаріанка',cat:'Ресторан',note:'Чол. / Жін.'},
+  {fr:'Que recommandez-vous ?',pr:'ке рекомандевy',ua:'Що ви рекомендуєте ?',cat:'Ресторан',note:'Щоб попросити пораду'},
+  {fr:'Je ne me sens pas bien',pr:'же не ме сан па б\'єн',ua:'Мені погано',cat:'Здоров\'я',note:'Щоб сказати про нездужання'},
+  {fr:'Appelez le SAMU',pr:'апле ле самю',ua:'Викличте швидку',cat:'Здоров\'я',note:'SAMU = французька швидка (15)'},
+  {fr:'J\'ai mal à la tête',pr:'же ме мала ля тет',ua:'У мене болить голова',cat:'Здоров\'я',note:'Замініть "tête" на іншу частину тіла'},
+  {fr:'Je ne comprends pas',pr:'же не компран па',ua:'Я не розумію',cat:'Спілкування',note:'Найкорисніша фраза для початківця'},
+  {fr:'Parlez plus lentement',pr:'парле плю лантман',ua:'Говоріть повільніше',cat:'Спілкування',note:'Незамінна фраза на початку навчання'},
+  {fr:'Comment dit-on ... en français ?',pr:'коман діт-он ... ан франсе',ua:'Як сказати ... французькою ?',cat:'Спілкування',note:'Ключ до навчання !'},
+  {fr:'Répétez, s\'il vous plaît',pr:'репете сіль ву пле',ua:'Повторіть, будь ласка',cat:'Спілкування',note:'У класі або розмові'},
+  {fr:'Je pense que...',pr:'же панс ке',ua:'Я думаю, що...',cat:'Думки',note:'Щоб висловити думку'},
+  {fr:'À mon avis...',pr:'а мон ав\'і',ua:'На мою думку...',cat:'Думки',note:'Більш офіційний стиль'},
+  {fr:'Je suis d\'accord',pr:'же сюї дакор',ua:'Я згоден / згодна',cat:'Думки',note:'Висловлення згоди'},
+  {fr:'Je ne suis pas d\'accord',pr:'же не сюї па дакор',ua:'Я не згоден / не згодна',cat:'Думки',note:'Ввічлива незгода'},
+];
+
+const VERBS=[
+  {inf:'être',fr:'бути',pres:[{pro:'je',fr:'suis',pr:'сюї'},{pro:'tu',fr:'es',pr:'е'},{pro:'il / elle',fr:'est',pr:'е'},{pro:'nous',fr:'sommes',pr:'сом'},{pro:'vous',fr:'êtes',pr:'ет'},{pro:'ils / elles',fr:'sont',pr:'сон'}],past:[{pro:'j\'',fr:'ai été',pr:'е ете'},{pro:'tu',fr:'as été',pr:'а ете'},{pro:'il / elle',fr:'a été',pr:'а ете'},{pro:'nous',fr:'avons été',pr:'авон ете'},{pro:'vous',fr:'avez été',pr:'аве ете'},{pro:'ils',fr:'ont été',pr:'он ете'}],fut:[{pro:'je',fr:'serai',pr:'сере'},{pro:'tu',fr:'seras',pr:'сера'},{pro:'il / elle',fr:'sera',pr:'сера'},{pro:'nous',fr:'serons',pr:'серон'},{pro:'vous',fr:'serez',pr:'сере'},{pro:'ils',fr:'seront',pr:'серон'}],note:'Дієслово "être" (бути) — найважливіше у французькій. Повністю неправильне.'},
+  {inf:'avoir',fr:'мати',pres:[{pro:'je',fr:'ai',pr:'е'},{pro:'tu',fr:'as',pr:'а'},{pro:'il / elle',fr:'a',pr:'а'},{pro:'nous',fr:'avons',pr:'авон'},{pro:'vous',fr:'avez',pr:'аве'},{pro:'ils / elles',fr:'ont',pr:'он'}],past:[{pro:'j\'',fr:'ai eu',pr:'е ю'},{pro:'tu',fr:'as eu',pr:'а ю'},{pro:'il / elle',fr:'a eu',pr:'а ю'},{pro:'nous',fr:'avons eu',pr:'авон ю'},{pro:'vous',fr:'avez eu',pr:'аве ю'},{pro:'ils',fr:'ont eu',pr:'он ю'}],fut:[{pro:'je',fr:'aurai',pr:'оре'},{pro:'tu',fr:'auras',pr:'ора'},{pro:'il / elle',fr:'aura',pr:'ора'},{pro:'nous',fr:'aurons',pr:'орон'},{pro:'vous',fr:'aurez',pr:'оре'},{pro:'ils',fr:'auront',pr:'орон'}],note:'"Avoir" також використовується як допоміжне дієслово для утворення минулого часу.'},
+  {inf:'aller',fr:'йти / їхати',pres:[{pro:'je',fr:'vais',pr:'ве'},{pro:'tu',fr:'vas',pr:'ва'},{pro:'il / elle',fr:'va',pr:'ва'},{pro:'nous',fr:'allons',pr:'алон'},{pro:'vous',fr:'allez',pr:'але'},{pro:'ils / elles',fr:'vont',pr:'вон'}],past:[{pro:'je',fr:'suis allé(e)',pr:'сюї але'},{pro:'tu',fr:'es allé(e)',pr:'е але'},{pro:'il',fr:'est allé',pr:'е але'},{pro:'nous',fr:'sommes allé(e)s',pr:'сом але'},{pro:'vous',fr:'êtes allé(e)s',pr:'ет але'},{pro:'ils',fr:'sont allés',pr:'сон але'}],fut:[{pro:'je',fr:'irai',pr:'іре'},{pro:'tu',fr:'iras',pr:'іра'},{pro:'il / elle',fr:'ira',pr:'іра'},{pro:'nous',fr:'irons',pr:'ірон'},{pro:'vous',fr:'irez',pr:'іре'},{pro:'ils',fr:'iront',pr:'ірон'}],note:'"Aller" — неправильне дієслово. Теперішній час: vais/vas/va (не від кореня "all-").'},
+  {inf:'faire',fr:'робити',pres:[{pro:'je',fr:'fais',pr:'фе'},{pro:'tu',fr:'fais',pr:'фе'},{pro:'il / elle',fr:'fait',pr:'фе'},{pro:'nous',fr:'faisons',pr:'фезон'},{pro:'vous',fr:'faites',pr:'фет'},{pro:'ils / elles',fr:'font',pr:'фон'}],past:[{pro:'j\'',fr:'ai fait',pr:'е фе'},{pro:'tu',fr:'as fait',pr:'а фе'},{pro:'il',fr:'a fait',pr:'а фе'},{pro:'nous',fr:'avons fait',pr:'авон фе'},{pro:'vous',fr:'avez fait',pr:'аве фе'},{pro:'ils',fr:'ont fait',pr:'он фе'}],fut:[{pro:'je',fr:'ferai',pr:'фере'},{pro:'tu',fr:'feras',pr:'фера'},{pro:'il / elle',fr:'fera',pr:'фера'},{pro:'nous',fr:'ferons',pr:'ферон'},{pro:'vous',fr:'ferez',pr:'фере'},{pro:'ils',fr:'feront',pr:'ферон'}],note:'"Faire" = робити, але також використовується в сталих виразах: faire du sport, faire la cuisine.'},
+  {inf:'parler',fr:'говорити',pres:[{pro:'je',fr:'parle',pr:'парль'},{pro:'tu',fr:'parles',pr:'парль'},{pro:'il / elle',fr:'parle',pr:'парль'},{pro:'nous',fr:'parlons',pr:'парлон'},{pro:'vous',fr:'parlez',pr:'парле'},{pro:'ils / elles',fr:'parlent',pr:'парль'}],past:[{pro:'j\'',fr:'ai parlé',pr:'е парле'},{pro:'tu',fr:'as parlé',pr:'а парле'},{pro:'il',fr:'a parlé',pr:'а парле'},{pro:'nous',fr:'avons parlé',pr:'авон парле'},{pro:'vous',fr:'avez parlé',pr:'аве парле'},{pro:'ils',fr:'ont parlé',pr:'он парле'}],fut:[{pro:'je',fr:'parlerai',pr:'парлере'},{pro:'tu',fr:'parleras',pr:'парлера'},{pro:'il / elle',fr:'parlera',pr:'парлера'},{pro:'nous',fr:'parlerons',pr:'парлерон'},{pro:'vous',fr:'parlerez',pr:'парлере'},{pro:'ils',fr:'parleront',pr:'парлерон'}],note:'Правильне дієслово 1-ї групи (-er). Модель для тисяч інших дієслів.'},
+  {inf:'vouloir',fr:'хотіти',pres:[{pro:'je',fr:'veux',pr:'во'},{pro:'tu',fr:'veux',pr:'во'},{pro:'il / elle',fr:'veut',pr:'во'},{pro:'nous',fr:'voulons',pr:'вулон'},{pro:'vous',fr:'voulez',pr:'вуле'},{pro:'ils / elles',fr:'veulent',pr:'вель'}],past:[{pro:'j\'',fr:'ai voulu',pr:'е вулю'},{pro:'tu',fr:'as voulu',pr:'а вулю'},{pro:'il',fr:'a voulu',pr:'а вулю'},{pro:'nous',fr:'avons voulu',pr:'авон вулю'},{pro:'vous',fr:'avez voulu',pr:'аве вулю'},{pro:'ils',fr:'ont voulu',pr:'он вулю'}],fut:[{pro:'je',fr:'voudrai',pr:'вудре'},{pro:'tu',fr:'voudras',pr:'вудра'},{pro:'il / elle',fr:'voudra',pr:'вудра'},{pro:'nous',fr:'voudrons',pr:'вудрон'},{pro:'vous',fr:'voudrez',pr:'вудре'},{pro:'ils',fr:'voudront',pr:'вудрон'}],note:'Умовний спосіб "voudrais" (хотів би) — ввічливіша форма.'},
+  {inf:'pouvoir',fr:'могти',pres:[{pro:'je',fr:'peux',pr:'по'},{pro:'tu',fr:'peux',pr:'по'},{pro:'il / elle',fr:'peut',pr:'по'},{pro:'nous',fr:'pouvons',pr:'пувон'},{pro:'vous',fr:'pouvez',pr:'пуве'},{pro:'ils / elles',fr:'peuvent',pr:'пев'}],past:[{pro:'j\'',fr:'ai pu',pr:'е пю'},{pro:'tu',fr:'as pu',pr:'а пю'},{pro:'il',fr:'a pu',pr:'а пю'},{pro:'nous',fr:'avons pu',pr:'авон пю'},{pro:'vous',fr:'avez pu',pr:'аве пю'},{pro:'ils',fr:'ont pu',pr:'он пю'}],fut:[{pro:'je',fr:'pourrai',pr:'пуре'},{pro:'tu',fr:'pourras',pr:'пура'},{pro:'il / elle',fr:'pourra',pr:'пура'},{pro:'nous',fr:'pourrons',pr:'пурон'},{pro:'vous',fr:'pourrez',pr:'пуре'},{pro:'ils',fr:'pourront',pr:'пурон'}],note:'"Puis-je ?" — офіційна форма питання замість "Peux-je ?" (не вживається).'},
+  {inf:'savoir',fr:'знати / вміти',pres:[{pro:'je',fr:'sais',pr:'се'},{pro:'tu',fr:'sais',pr:'се'},{pro:'il / elle',fr:'sait',pr:'се'},{pro:'nous',fr:'savons',pr:'савон'},{pro:'vous',fr:'savez',pr:'саве'},{pro:'ils / elles',fr:'savent',pr:'сав'}],past:[{pro:'j\'',fr:'ai su',pr:'е сю'},{pro:'tu',fr:'as su',pr:'а сю'},{pro:'il',fr:'a su',pr:'а сю'},{pro:'nous',fr:'avons su',pr:'авон сю'},{pro:'vous',fr:'avez su',pr:'аве сю'},{pro:'ils',fr:'ont su',pr:'он сю'}],fut:[{pro:'je',fr:'saurai',pr:'соре'},{pro:'tu',fr:'sauras',pr:'сора'},{pro:'il / elle',fr:'saura',pr:'сора'},{pro:'nous',fr:'saurons',pr:'сорон'},{pro:'vous',fr:'saurez',pr:'соре'},{pro:'ils',fr:'sauront',pr:'сорон'}],note:'"Savoir" = знати факти / вміти. Відрізняється від "connaître" (знати особисто).'},
+  {inf:'prendre',fr:'брати / їхати',pres:[{pro:'je',fr:'prends',pr:'пран'},{pro:'tu',fr:'prends',pr:'пран'},{pro:'il / elle',fr:'prend',pr:'пран'},{pro:'nous',fr:'prenons',pr:'пренон'},{pro:'vous',fr:'prenez',pr:'прене'},{pro:'ils / elles',fr:'prennent',pr:'прен'}],past:[{pro:'j\'',fr:'ai pris',pr:'е прі'},{pro:'tu',fr:'as pris',pr:'а прі'},{pro:'il',fr:'a pris',pr:'а прі'},{pro:'nous',fr:'avons pris',pr:'авон прі'},{pro:'vous',fr:'avez pris',pr:'аве прі'},{pro:'ils',fr:'ont pris',pr:'он прі'}],fut:[{pro:'je',fr:'prendrai',pr:'прандре'},{pro:'tu',fr:'prendras',pr:'прандра'},{pro:'il / elle',fr:'prendra',pr:'прандра'},{pro:'nous',fr:'prendrons',pr:'прандрон'},{pro:'vous',fr:'prendrez',pr:'прандре'},{pro:'ils',fr:'prendront',pr:'прандрон'}],note:'"Prendre le bus / métro" = їхати автобусом / метро. Дуже поширене дієслово.'},
+  {inf:'manger',fr:'їсти',pres:[{pro:'je',fr:'mange',pr:'манж'},{pro:'tu',fr:'manges',pr:'манж'},{pro:'il / elle',fr:'mange',pr:'манж'},{pro:'nous',fr:'mangeons',pr:'манжон'},{pro:'vous',fr:'mangez',pr:'манже'},{pro:'ils / elles',fr:'mangent',pr:'манж'}],past:[{pro:'j\'',fr:'ai mangé',pr:'е манже'},{pro:'tu',fr:'as mangé',pr:'а манже'},{pro:'il',fr:'a mangé',pr:'а манже'},{pro:'nous',fr:'avons mangé',pr:'авон манже'},{pro:'vous',fr:'avez mangé',pr:'аве манже'},{pro:'ils',fr:'ont mangé',pr:'он манже'}],fut:[{pro:'je',fr:'mangerai',pr:'манжере'},{pro:'tu',fr:'mangeras',pr:'манжера'},{pro:'il / elle',fr:'mangera',pr:'манжера'},{pro:'nous',fr:'mangerons',pr:'манжерон'},{pro:'vous',fr:'mangerez',pr:'манжере'},{pro:'ils',fr:'mangeront',pr:'манжерон'}],note:'Зверніть увагу на "mangeons" (nous) — "e" зберігається перед "o" для м\'якого звуку "g".'},
+  {inf:'boire',fr:'пити',pres:[{pro:'je',fr:'bois',pr:'буа'},{pro:'tu',fr:'bois',pr:'буа'},{pro:'il / elle',fr:'boit',pr:'буа'},{pro:'nous',fr:'buvons',pr:'бювон'},{pro:'vous',fr:'buvez',pr:'бюве'},{pro:'ils / elles',fr:'boivent',pr:'буав'}],past:[{pro:'j\'',fr:'ai bu',pr:'е бю'},{pro:'tu',fr:'as bu',pr:'а бю'},{pro:'il',fr:'a bu',pr:'а бю'},{pro:'nous',fr:'avons bu',pr:'авон бю'},{pro:'vous',fr:'avez bu',pr:'аве бю'},{pro:'ils',fr:'ont bu',pr:'он бю'}],fut:[{pro:'je',fr:'boirai',pr:'буаре'},{pro:'tu',fr:'boiras',pr:'буара'},{pro:'il / elle',fr:'boira',pr:'буара'},{pro:'nous',fr:'boirons',pr:'буарон'},{pro:'vous',fr:'boirez',pr:'буаре'},{pro:'ils',fr:'boiront',pr:'буарон'}],note:'Неправильне дієслово. Корінь змінюється: boi- (одн.) → buv- (мн.).'},
+  {inf:'dormir',fr:'спати',pres:[{pro:'je',fr:'dors',pr:'дор'},{pro:'tu',fr:'dors',pr:'дор'},{pro:'il / elle',fr:'dort',pr:'дор'},{pro:'nous',fr:'dormons',pr:'дормон'},{pro:'vous',fr:'dormez',pr:'дорме'},{pro:'ils / elles',fr:'dorment',pr:'дорм'}],past:[{pro:'j\'',fr:'ai dormi',pr:'е дормі'},{pro:'tu',fr:'as dormi',pr:'а дормі'},{pro:'il',fr:'a dormi',pr:'а дормі'},{pro:'nous',fr:'avons dormi',pr:'авон дормі'},{pro:'vous',fr:'avez dormi',pr:'аве дормі'},{pro:'ils',fr:'ont dormi',pr:'он дормі'}],fut:[{pro:'je',fr:'dormirai',pr:'дормере'},{pro:'tu',fr:'dormiras',pr:'дормера'},{pro:'il / elle',fr:'dormira',pr:'дормера'},{pro:'nous',fr:'dormirons',pr:'дормерон'},{pro:'vous',fr:'dormirez',pr:'дормере'},{pro:'ils',fr:'dormiront',pr:'дормерон'}],note:'Дієслово 3-ї групи. Закінчення -s, -s, -t у однині (без останньої приголосної кореня).'},
+  {inf:'travailler',fr:'працювати',pres:[{pro:'je',fr:'travaille',pr:'трав\'ай'},{pro:'tu',fr:'travailles',pr:'трав\'ай'},{pro:'il / elle',fr:'travaille',pr:'трав\'ай'},{pro:'nous',fr:'travaillons',pr:'трав\'айон'},{pro:'vous',fr:'travaillez',pr:'трав\'айе'},{pro:'ils / elles',fr:'travaillent',pr:'трав\'ай'}],past:[{pro:'j\'',fr:'ai travaillé',pr:'е трав\'айе'},{pro:'tu',fr:'as travaillé',pr:'а трав\'айе'},{pro:'il',fr:'a travaillé',pr:'а трав\'айе'},{pro:'nous',fr:'avons travaillé',pr:'авон трав\'айе'},{pro:'vous',fr:'avez travaillé',pr:'аве трав\'айе'},{pro:'ils',fr:'ont travaillé',pr:'он трав\'айе'}],fut:[{pro:'je',fr:'travaillerai',pr:'трав\'айере'},{pro:'tu',fr:'travailleras',pr:'трав\'айера'},{pro:'il / elle',fr:'travaillera',pr:'трав\'айера'},{pro:'nous',fr:'travaillerons',pr:'трав\'айерон'},{pro:'vous',fr:'travaillerez',pr:'трав\'айере'},{pro:'ils',fr:'travailleront',pr:'трав\'айерон'}],note:'Правильне -er дієслово. Звук "ll" вимовляється як "й" у французькій.'},
+  {inf:'lire',fr:'читати',pres:[{pro:'je',fr:'lis',pr:'лі'},{pro:'tu',fr:'lis',pr:'лі'},{pro:'il / elle',fr:'lit',pr:'лі'},{pro:'nous',fr:'lisons',pr:'лізон'},{pro:'vous',fr:'lisez',pr:'лізе'},{pro:'ils / elles',fr:'lisent',pr:'ліз'}],past:[{pro:'j\'',fr:'ai lu',pr:'е лю'},{pro:'tu',fr:'as lu',pr:'а лю'},{pro:'il',fr:'a lu',pr:'а лю'},{pro:'nous',fr:'avons lu',pr:'авон лю'},{pro:'vous',fr:'avez lu',pr:'аве лю'},{pro:'ils',fr:'ont lu',pr:'он лю'}],fut:[{pro:'je',fr:'lirai',pr:'ліре'},{pro:'tu',fr:'liras',pr:'ліра'},{pro:'il / elle',fr:'lira',pr:'ліра'},{pro:'nous',fr:'lirons',pr:'лірон'},{pro:'vous',fr:'lirez',pr:'ліре'},{pro:'ils',fr:'liront',pr:'лірон'}],note:'Дієприкметник минулого часу: "lu". Корінь li- (теп.) → lis- (мн. теп.)'},
+  {inf:'écrire',fr:'писати',pres:[{pro:'je',fr:'écris',pr:'екрі'},{pro:'tu',fr:'écris',pr:'екрі'},{pro:'il / elle',fr:'écrit',pr:'екрі'},{pro:'nous',fr:'écrivons',pr:'екрівон'},{pro:'vous',fr:'écrivez',pr:'екріве'},{pro:'ils / elles',fr:'écrivent',pr:'екрів'}],past:[{pro:'j\'',fr:'ai écrit',pr:'е екрі'},{pro:'tu',fr:'as écrit',pr:'а екрі'},{pro:'il',fr:'a écrit',pr:'а екрі'},{pro:'nous',fr:'avons écrit',pr:'авон екрі'},{pro:'vous',fr:'avez écrit',pr:'аве екрі'},{pro:'ils',fr:'ont écrit',pr:'он екрі'}],fut:[{pro:'je',fr:'écrirai',pr:'екріре'},{pro:'tu',fr:'écriras',pr:'екріра'},{pro:'il / elle',fr:'écrira',pr:'екріра'},{pro:'nous',fr:'écrirons',pr:'екрірон'},{pro:'vous',fr:'écrirez',pr:'екріре'},{pro:'ils',fr:'écriront',pr:'екрірон'}],note:'Корінь écri- (однина) → écriv- (множина). Схоже на "suivre", "vivre".'},
+  {inf:'venir',fr:'приходити',pres:[{pro:'je',fr:'viens',pr:'в\'єн'},{pro:'tu',fr:'viens',pr:'в\'єн'},{pro:'il / elle',fr:'vient',pr:'в\'єн'},{pro:'nous',fr:'venons',pr:'венон'},{pro:'vous',fr:'venez',pr:'вене'},{pro:'ils / elles',fr:'viennent',pr:'в\'єн'}],past:[{pro:'je',fr:'suis venu(e)',pr:'сюї вену'},{pro:'tu',fr:'es venu(e)',pr:'е вену'},{pro:'il',fr:'est venu',pr:'е вену'},{pro:'nous',fr:'sommes venu(e)s',pr:'сом вену'},{pro:'vous',fr:'êtes venu(e)s',pr:'ет вену'},{pro:'ils',fr:'sont venus',pr:'сон вену'}],fut:[{pro:'je',fr:'viendrai',pr:'в\'єндре'},{pro:'tu',fr:'viendras',pr:'в\'єндра'},{pro:'il / elle',fr:'viendra',pr:'в\'єндра'},{pro:'nous',fr:'viendrons',pr:'в\'єндрон'},{pro:'vous',fr:'viendrez',pr:'в\'єндре'},{pro:'ils',fr:'viendront',pr:'в\'єндрон'}],note:'"Venir" утворює минулий час з "être" (не "avoir"). Узгодження з підметом обов\'язкове.'},
+  {inf:'voir',fr:'бачити',pres:[{pro:'je',fr:'vois',pr:'вуа'},{pro:'tu',fr:'vois',pr:'вуа'},{pro:'il / elle',fr:'voit',pr:'вуа'},{pro:'nous',fr:'voyons',pr:'вуайон'},{pro:'vous',fr:'voyez',pr:'вуайе'},{pro:'ils / elles',fr:'voient',pr:'вуа'}],past:[{pro:'j\'',fr:'ai vu',pr:'е вю'},{pro:'tu',fr:'as vu',pr:'а вю'},{pro:'il',fr:'a vu',pr:'а вю'},{pro:'nous',fr:'avons vu',pr:'авон вю'},{pro:'vous',fr:'avez vu',pr:'аве вю'},{pro:'ils',fr:'ont vu',pr:'он вю'}],fut:[{pro:'je',fr:'verrai',pr:'вере'},{pro:'tu',fr:'verras',pr:'вера'},{pro:'il / elle',fr:'verra',pr:'вера'},{pro:'nous',fr:'verrons',pr:'верон'},{pro:'vous',fr:'verrez',pr:'вере'},{pro:'ils',fr:'verront',pr:'верон'}],note:'Корінь voi- (однина) → voy- (мн.). Майбутній час неправильний: verr-.'},
+  {inf:'comprendre',fr:'розуміти',pres:[{pro:'je',fr:'comprends',pr:'компран'},{pro:'tu',fr:'comprends',pr:'компран'},{pro:'il / elle',fr:'comprend',pr:'компран'},{pro:'nous',fr:'comprenons',pr:'компренон'},{pro:'vous',fr:'comprenez',pr:'комprене'},{pro:'ils / elles',fr:'comprennent',pr:'компрен'}],past:[{pro:'j\'',fr:'ai compris',pr:'е компрі'},{pro:'tu',fr:'as compris',pr:'а компрі'},{pro:'il',fr:'a compris',pr:'а компрі'},{pro:'nous',fr:'avons compris',pr:'авон компрі'},{pro:'vous',fr:'avez compris',pr:'аве компрі'},{pro:'ils',fr:'ont compris',pr:'он компрі'}],fut:[{pro:'je',fr:'comprendrai',pr:'компрандре'},{pro:'tu',fr:'comprendras',pr:'компрандра'},{pro:'il / elle',fr:'comprendra',pr:'компрандра'},{pro:'nous',fr:'comprendrons',pr:'компрандрон'},{pro:'vous',fr:'comprendrez',pr:'компрандре'},{pro:'ils',fr:'comprendront',pr:'компрандрон'}],note:'Складене дієслово від "prendre". Таке саме відмінювання з префіксом "com-".'},
+  {inf:'se lever',fr:'вставати',pres:[{pro:'je',fr:'me lève',pr:'ме лев'},{pro:'tu',fr:'te lèves',pr:'те лев'},{pro:'il / elle',fr:'se lève',pr:'се лев'},{pro:'nous',fr:'nous levons',pr:'ну левон'},{pro:'vous',fr:'vous levez',pr:'ву леве'},{pro:'ils / elles',fr:'se lèvent',pr:'се лев'}],past:[{pro:'je',fr:'me suis levé(e)',pr:'ме сюї леве'},{pro:'tu',fr:'t\'es levé(e)',pr:'те леве'},{pro:'il',fr:'s\'est levé',pr:'сe леве'},{pro:'nous',fr:'nous sommes levé(e)s',pr:'ну сом леве'},{pro:'vous',fr:'vous êtes levé(e)s',pr:'ву зет леве'},{pro:'ils',fr:'se sont levés',pr:'се сон леве'}],fut:[{pro:'je',fr:'me lèverai',pr:'ме левере'},{pro:'tu',fr:'te lèveras',pr:'те левера'},{pro:'il / elle',fr:'se lèvera',pr:'се левера'},{pro:'nous',fr:'nous lèverons',pr:'ну леверон'},{pro:'vous',fr:'vous lèverez',pr:'ву левере'},{pro:'ils',fr:'se lèveront',pr:'се леверон'}],note:'Зворотне дієслово (verbe pronominal). Минулий час з "être". Узгодження обов\'язкове.'},
+  {inf:'acheter',fr:'купувати',pres:[{pro:'je',fr:'achète',pr:'ашет'},{pro:'tu',fr:'achètes',pr:'ашет'},{pro:'il / elle',fr:'achète',pr:'ашет'},{pro:'nous',fr:'achetons',pr:'аштон'},{pro:'vous',fr:'achetez',pr:'аште'},{pro:'ils / elles',fr:'achètent',pr:'ашет'}],past:[{pro:'j\'',fr:'ai acheté',pr:'е аште'},{pro:'tu',fr:'as acheté',pr:'а аште'},{pro:'il',fr:'a acheté',pr:'а аште'},{pro:'nous',fr:'avons acheté',pr:'авон аште'},{pro:'vous',fr:'avez acheté',pr:'аве аште'},{pro:'ils',fr:'ont acheté',pr:'он аште'}],fut:[{pro:'je',fr:'achèterai',pr:'ашетере'},{pro:'tu',fr:'achèteras',pr:'ашетера'},{pro:'il / elle',fr:'achètera',pr:'ашетера'},{pro:'nous',fr:'achèterons',tr:'ашетерон'},{pro:'vous',fr:'achèterez',pr:'ашетере'},{pro:'ils',fr:'achèteront',pr:'ашетерон'}],note:'Чергування е→è перед "e" німим (je achète, але nous achetons).'},
+];
+
+const SOUNDS=[
+  {l:'[a]',s:'а',snd:'як "а" в "патент"',tip:'Відкритий звук, рот широко відкритий',ex:[{w:'chat',p:'ша',u:'кіт'},{w:'patte',p:'пат',u:'лапа'}]},
+  {l:'[e]',s:'е',snd:'як "е" в "мета"',tip:'Закритий звук, губи в посмішці',ex:[{w:'café',p:'кафе',u:'кава'},{w:'été',p:'ете',u:'літо'}]},
+  {l:'[ε]',s:'е відкр.',snd:'як "е" в "метр"',tip:'Відкритіший ніж [e]',ex:[{w:'fête',p:'фет',u:'свято'},{w:'mer',p:'мер',u:'море'}]},
+  {l:'[i]',s:'і',snd:'як "і" в "мир"',tip:'Губи розтягнуті в посмішці',ex:[{w:'vie',p:'ві',u:'життя'},{w:'midi',p:'міді',u:'полудень'}]},
+  {l:'[o]',s:'о закр.',snd:'як "о" в "боже"',tip:'Губи округлені, рот напівзакритий',ex:[{w:'beau',p:'бо',u:'красивий'},{w:'eau',p:'о',u:'вода'}]},
+  {l:'[ɔ]',s:'о відкр.',snd:'як "о" у "код"',tip:'Рот ширше відкритий ніж [o]',ex:[{w:'or',p:'ор',u:'золото'},{w:'sol',p:'соль',u:'ґрунт'}]},
+  {l:'[u]',s:'у',snd:'як "у" в "бур"',tip:'Губи дуже округлені та витягнуті',ex:[{w:'fou',p:'фу',u:'божевільний'},{w:'tout',p:'ту',u:'все'}]},
+  {l:'[y]',s:'ю',snd:'між "і" і "у" — немає в укр.',tip:'Губи як для "у", але язик як для "і"',ex:[{w:'tu',p:'тю',u:'ти'},{w:'lune',p:'люн',u:'місяць'}]},
+  {l:'[ø]',s:'е-о',snd:'між "е" і "о" — немає в укр.',tip:'Губи округлені, язик як для "е"',ex:[{w:'feu',p:'фо',u:'вогонь'},{w:'bleu',p:'бло',u:'синій'}]},
+  {l:'[œ]',s:'е-о відкр.',snd:'відкритіший ніж [ø]',tip:'Рот ширше відкритий',ex:[{w:'peur',p:'пер',u:'страх'},{w:'heure',p:'ер',u:'година'}]},
+  {l:'[ə]',s:'е нейтр.',snd:'"е" ненаголошене',tip:'Майже не вимовляється в розмові',ex:[{w:'le',p:'лe',u:'(артикль)'},{w:'demain',p:'деман',u:'завтра'}]},
+  {l:'[ã]',s:'ан',snd:'носовий "ан" — немає в укр.',tip:'Повітря виходить через ніс та рот',ex:[{w:'grand',p:'гран',u:'великий'},{w:'temps',p:'тан',u:'час/погода'}]},
+  {l:'[ε̃]',s:'ен',snd:'носовий "ен"',tip:'Носовий звук, ніс вібрує',ex:[{w:'vin',p:'ван',u:'вино'},{w:'pain',p:'пан',u:'хліб'}]},
+  {l:'[õ]',s:'он',snd:'носовий "он"',tip:'Губи округлені, звук через ніс',ex:[{w:'bon',p:'бон',u:'хороший'},{w:'son',p:'сон',u:'звук'}]},
+  {l:'[r]',s:'р',snd:'"р" гортанний, не котиться',tip:'Звук у горлі, не як укр. "р"',ex:[{w:'rue',p:'рю',u:'вулиця'},{w:'rouge',p:'руж',u:'червоний'}]},
+  {l:'[ʃ]',s:'ш',snd:'як "ш" в "шум"',tip:'Завжди тверде "ш"',ex:[{w:'chat',p:'ша',u:'кіт'},{w:'bouche',p:'буш',u:'рот'}]},
+  {l:'[ʒ]',s:'ж',snd:'як "ж" в "жук"',tip:'М\'яке дзвінке "ж"',ex:[{w:'je',p:'же',u:'я'},{w:'rouge',p:'руж',u:'червоний'}]},
+  {l:'[j]',s:'й',snd:'як "й" в "йти"',tip:'Напівголосний звук',ex:[{w:'yeux',p:'йо',u:'очі'},{w:'pied',p:'п\'є',u:'нога'}]},
+  {l:'[w]',s:'у/в',snd:'як "у" в "увага" (коротке)',tip:'Напівголосний, дуже короткий',ex:[{w:'oui',p:'уї',u:'так'},{w:'moi',p:'муа',u:'я (самостійна форма)'}]},
+  {l:'[ɥ]',s:'ю (корот.)',snd:'короткий [y] — тільки у франц.',tip:'Губи як [y], але дуже коротко',ex:[{w:'nuit',p:'нюї',u:'ніч'},{w:'lui',p:'люї',u:'йому'}]},
+  {l:'[p]',s:'п',snd:'як "п" в "парк"',tip:'Не аспіроване (без подиху)',ex:[{w:'père',p:'пер',u:'батько'},{w:'pomme',p:'пом',u:'яблуко'}]},
+  {l:'[b]',s:'б',snd:'як "б" в "будинок"',tip:'Дзвінка пара до [p]',ex:[{w:'belle',p:'бель',u:'красива'},{w:'boire',p:'буар',u:'пити'}]},
+  {l:'[t]',s:'т',snd:'як "т" в "тихо"',tip:'Не аспіроване',ex:[{w:'table',p:'табль',u:'стіл'},{w:'tête',p:'тет',u:'голова'}]},
+  {l:'[d]',s:'д',snd:'як "д" в "дерево"',tip:'Дзвінка пара до [t]',ex:[{w:'dire',p:'дір',u:'говорити'},{w:'dormir',p:'дормір',u:'спати'}]},
+  {l:'[k]',s:'к',snd:'як "к" в "кіт"',tip:'Не аспіроване',ex:[{w:'café',p:'кафе',u:'кава'},{w:'carte',p:'карт',u:'карта'}]},
+  {l:'[g]',s:'г',snd:'як "ґ" в "ґанок"',tip:'Дзвінка пара до [k]',ex:[{w:'gare',p:'гар',u:'вокзал'},{w:'grand',p:'гран',u:'великий'}]},
+  {l:'[f]',s:'ф',snd:'як "ф" в "фото"',tip:'Також пишеться як "ph"',ex:[{w:'feu',p:'фо',u:'вогонь'},{w:'femme',p:'фам',u:'жінка'}]},
+  {l:'[v]',s:'в',snd:'як "в" в "вода"',tip:'Дзвінка пара до [f]',ex:[{w:'vie',p:'ві',u:'життя'},{w:'venir',p:'венір',u:'приходити'}]},
+  {l:'[s]',s:'с',snd:'як "с" в "сонце"',tip:'"ss", "c" перед e/i, "ç" = [s]',ex:[{w:'soleil',p:'солей',u:'сонце'},{w:'ça',p:'са',u:'це'}]},
+  {l:'[z]',s:'з',snd:'як "з" в "зима"',tip:'Liaison: "les amis" → [z] між словами',ex:[{w:'zéro',p:'зеро',u:'нуль'},{w:'maison',p:'мезон',u:'будинок'}]},
+];
+
+let known=new Set(),xp=0,ankiSession=[],ankiIdx=0,ankiFlipped=false,ankiDoneToday=0;
+let selCat='Усі',selPhrCat='Усі',selVerb=0,selTense='pres';
+let qCur=0,qArr=[],qCorrect=0,qAns=false;
+const pages=['home','vocab','quiz','anki','phrases','conj','sounds'];
+
+function saveData(){try{localStorage.setItem('fr_known',JSON.stringify([...known]));localStorage.setItem('fr_xp',xp);localStorage.setItem('fr_anki_done',ankiDoneToday);}catch(e){}}
+function loadData(){try{const k=localStorage.getItem('fr_known');if(k)known=new Set(JSON.parse(k));const x=localStorage.getItem('fr_xp');if(x)xp=parseInt(x)||0;const a=localStorage.getItem('fr_anki_done');if(a)ankiDoneToday=parseInt(a)||0;}catch(e){}}
+loadData();
+
+function haptic(){try{if(navigator.vibrate)navigator.vibrate(10);}catch(e){}}
+function speak(text,e){if(e)e.stopPropagation();if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';u.rate=0.85;u.pitch=1;const voices=window.speechSynthesis.getVoices();const v=voices.find(v=>v.lang==='fr-FR')||voices.find(v=>v.lang.startsWith('fr'))||null;if(v)u.voice=v;window.speechSynthesis.speak(u);haptic();}
+function speakEx(t,e){speak(t,e);}
+
+function go(id){
+  pages.forEach(p=>{
+    document.getElementById('page-'+p).classList.toggle('on',p===id);
+    document.getElementById('bnav-'+p).classList.toggle('on',p===id);
+  });
+  document.querySelector('.content').scrollTop=0;haptic();
+  if(id==='quiz')startQuiz();
+  if(id==='anki')initAnki();
+  if(id==='phrases')renderPhrases();
+  if(id==='conj')renderConj();
+  if(id==='sounds')renderSounds();
+  if(id==='vocab')renderVocab();
+}
+function addXP(n){xp+=n;saveData();updateAll();}
+function updateAll(){
+  const kc=known.size;
+  document.getElementById('kc').textContent=kc;
+  document.getElementById('s1').textContent=kc;
+  document.getElementById('s2').textContent=ankiDoneToday;
+  document.getElementById('s3').textContent=xp;
+  document.getElementById('vkc').textContent=kc;
+  document.getElementById('xp-lbl').textContent=xp+' XP';
+  document.getElementById('gp').style.width=Math.max(5,Math.round(kc/VOCAB.length*100))+'%';
+}
+function renderVocab(){
+  const cats=['Усі',...new Set(VOCAB.map(v=>v.cat))];
+  document.getElementById('vtot').textContent=VOCAB.length;
+  document.getElementById('vpills').innerHTML=cats.map(c=>`<button class="pill ${c===selCat?'on':''}" onclick="selCat='${c}';renderVocab()">${c}</button>`).join('');
+  const list=selCat==='Усі'?VOCAB:VOCAB.filter(v=>v.cat===selCat);
+  document.getElementById('vgrid').innerHTML=list.map(w=>{
+    const i=VOCAB.indexOf(w),k=known.has(i);
+    const fr=w.fr.replace(/'/g,"\\'");
+    return `<div class="wcard ${k?'known':''}">
+      <div class="wleft" onclick="toggleKnown(${i})">
+        <span class="tag tag-${w.lvl}">${w.lvl.toUpperCase()}</span>
+        <div class="wfr" style="margin-top:4px">${w.fr}</div>
+        <div class="wpr">${w.pr}</div>
+        <div class="wua">${w.ua}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <button class="speak-btn" onclick="speak('${fr}',event)">🔊</button>
+        <div class="wchk" onclick="toggleKnown(${i})">${k?'✓':''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleKnown(i){if(known.has(i))known.delete(i);else{known.add(i);addXP(2);}saveData();renderVocab();updateAll();}
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+function startQuiz(){
+  qArr=shuffle(VOCAB).slice(0,10);qCur=0;qCorrect=0;qAns=false;
+  document.getElementById('qmain').style.display='block';
+  document.getElementById('qres').style.display='none';
+  renderQ();
+}
+function renderQ(){
+  const q=qArr[qCur];
+  document.getElementById('qbf').style.width=(qCur/10*100)+'%';
+  document.getElementById('qn').textContent=qCur+'/10';
+  document.getElementById('qsl').textContent=qCorrect+' ✓';
+  qAns=false;
+  document.getElementById('qfb').className='qfb';
+  document.getElementById('qnext').className='qnext-btn';
+  const mode=Math.random()>.5?'fr':'ua';
+  document.getElementById('qbadge').textContent=mode==='fr'?'ФР → УКР':'УКР → ФР';
+  document.getElementById('qq').textContent=mode==='fr'?q.fr:q.ua;
+  document.getElementById('qhint').textContent=mode==='fr'?q.pr:'';
+  const qcard=document.querySelector('.qcard');
+  let spkBtn=qcard.querySelector('.q-speak');
+  if(!spkBtn){spkBtn=document.createElement('button');spkBtn.className='speak-btn q-speak';spkBtn.style.margin='12px auto 0';spkBtn.textContent='🔊';qcard.appendChild(spkBtn);}
+  spkBtn.onclick=(e)=>{e.stopPropagation();speak(mode==='fr'?q.fr:q.ua,e);};
+  if(mode==='ua')spkBtn.style.display='none';else spkBtn.style.display='flex';
+  const wrongs=shuffle(VOCAB.filter(v=>v.ua!==q.ua)).slice(0,3);
+  const opts=shuffle([q,...wrongs]);
+  document.getElementById('qopts').innerHTML=opts.map(o=>{
+    const lbl=mode==='fr'?o.ua:o.fr;
+    const isc=o===q;
+    return `<button class="qopt" onclick="selQ(this,${isc},'${q.fr.replace(/'/g,"\\'")}','${q.ua.replace(/'/g,"\\'")}')">${lbl}</button>`;
+  }).join('');
+}
+function selQ(btn,isc,fr,ua){
+  if(qAns)return;qAns=true;
+  document.querySelectorAll('.qopt').forEach(o=>o.disabled=true);
+  const fb=document.getElementById('qfb');
+  if(isc){btn.classList.add('ok');qCorrect++;addXP(5);fb.textContent='Правильно — '+fr+' = '+ua;fb.className='qfb show g';}
+  else{btn.classList.add('no');document.querySelectorAll('.qopt').forEach(o=>{if(o.textContent===ua||o.textContent===fr)o.classList.add('ok');});fb.textContent='Неправильно — відповідь: '+fr+' = '+ua;fb.className='qfb show b';}
+  document.getElementById('qnext').className='qnext-btn show';
+}
+function nextQ(){
+  qCur++;
+  if(qCur>=10){
+    document.getElementById('qmain').style.display='none';
+    document.getElementById('qres').style.display='block';
+    const p=qCorrect/10;
+    document.getElementById('rsc').innerHTML=qCorrect+'<span>/10</span>';
+    document.getElementById('rmsg').textContent=p>=.8?'Чудовий результат!':p>=.6?'Добра робота!':p>=.4?'Продовжуйте практикуватись.':'Повторіть словник і спробуйте знову.';
+  }else renderQ();
+}
+function initAnki(){
+  const pool=VOCAB.filter((_,i)=>!known.has(i));
+  ankiSession=shuffle(pool).slice(0,20).map(w=>({...w,reps:0}));
+  ankiIdx=0;ankiFlipped=false;ankiDoneToday=0;
+  document.getElementById('anki-done').style.display='none';
+  document.getElementById('anki-main').style.display='block';
+  updateAnkiStats();showAnkiCard();
+}
+function updateAnkiStats(){
+  document.getElementById('an-due').textContent=Math.max(0,ankiSession.length-ankiIdx);
+  document.getElementById('an-new').textContent=ankiSession.filter(c=>c.reps===0).length;
+  document.getElementById('an-done').textContent=ankiDoneToday;
+}
+function showAnkiCard(){
+  if(ankiIdx>=ankiSession.length){document.getElementById('anki-main').style.display='none';document.getElementById('anki-done').style.display='block';return;}
+  const c=ankiSession[ankiIdx];ankiFlipped=false;
+  document.getElementById('af-fr').textContent=c.fr;
+  document.getElementById('af-pr').textContent=c.pr;
+  document.getElementById('af-ua').textContent=c.ua;
+  document.getElementById('af-cat').textContent=c.cat+' · '+c.lvl.toUpperCase();
+  document.getElementById('anki-back').className='anki-back';
+  document.getElementById('anki-btns').className='anki-btns';
+  document.getElementById('anki-hint').style.display='block';
+  document.getElementById('anki-queue').textContent=(ankiSession.length-ankiIdx)+' карток залишилось';
+  updateAnkiStats();
+}
+function flipAnki(){if(ankiFlipped)return;ankiFlipped=true;document.getElementById('anki-back').className='anki-back show';document.getElementById('anki-btns').className='anki-btns show';document.getElementById('anki-hint').style.display='none';}
+function rateAnki(r){
+  if(!ankiFlipped)return;
+  addXP([0,2,5,10][r]);ankiDoneToday++;
+  if(r===0){const c=ankiSession.splice(ankiIdx,1)[0];ankiSession.splice(Math.min(ankiIdx+3,ankiSession.length),0,c);}
+  else{if(r>=2)known.add(VOCAB.indexOf(ankiSession[ankiIdx]));ankiIdx++;}
+  updateAll();saveData();showAnkiCard();
+}
+function resetAnki(){initAnki();}
+function renderPhrases(){
+  const cats=['Усі',...new Set(PHRASES.map(p=>p.cat))];
+  document.getElementById('phr-cats').innerHTML=cats.map(c=>`<button class="pill ${c===selPhrCat?'on':''}" onclick="selPhrCat='${c}';renderPhrases()">${c}</button>`).join('');
+  const list=selPhrCat==='Усі'?PHRASES:PHRASES.filter(p=>p.cat===selPhrCat);
+  document.getElementById('phr-grid').innerHTML=list.map(p=>{
+    const fr=p.fr.replace(/'/g,"\\'");
+    return `<div class="phr-card" onclick="this.classList.toggle('open')">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <div style="flex:1">
+          <div class="phr-fr">${p.fr}</div>
+          <div class="phr-pr">${p.pr}</div>
+          <div class="phr-ua">${p.ua}</div>
+        </div>
+        <button class="speak-btn" onclick="speak('${fr}',event)" style="margin-top:4px;flex-shrink:0">🔊</button>
+      </div>
+      <div class="phr-note">${p.note}</div>
+    </div>`;
+  }).join('');
+}
+function renderConj(){
+  document.getElementById('verb-sel').innerHTML=VERBS.map((v,i)=>`<button class="vbtn ${i===selVerb?'on':''}" onclick="selVerb=${i};renderConj()">${v.inf}</button>`).join('');
+  const tenses=[{k:'pres',l:'Теперішній'},{k:'past',l:'Минулий (PC)'},{k:'fut',l:'Майбутній'}];
+  document.getElementById('tense-pills').innerHTML=tenses.map(t=>`<button class="pill ${t.k===selTense?'on':''}" onclick="selTense='${t.k}';renderConj()">${t.l}</button>`).join('');
+  const v=VERBS[selVerb],rows=v[selTense];
+  const inf=v.inf.replace(/'/g,"\\'");
+  document.getElementById('conj-wrap').innerHTML=`
+    <div class="conj-head">
+      <h3>${v.inf}</h3><span>${v.fr}</span>
+      <button class="speak-btn" onclick="speak('${inf}',event)" style="margin-left:auto">🔊</button>
+    </div>
+    <table class="conj-table"><tbody>
+    ${rows.map(r=>{const ua=r.fr.replace(/'/g,"\\'");return`<tr>
+      <td class="cpro">${r.pro}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div><div class="cfr">${r.fr}</div><div class="cpr">${r.pr||''}</div></div>
+          <button class="speak-btn" onclick="speak('${ua}',event)" style="margin-left:auto;flex-shrink:0">🔊</button>
+        </div>
+      </td>
+    </tr>`;}).join('')}
+    </tbody></table>
+    <div class="conj-note">${v.note}</div>`;
+}
+function renderSounds(){
+  document.getElementById('agrid').innerHTML=SOUNDS.map((a,i)=>`<div class="acard" onclick="showSound(${i})"><div class="aletter">${a.l}</div><div class="atrans">${a.s}</div></div>`).join('');
+}
+function showSound(i){
+  document.querySelectorAll('.acard').forEach((c,j)=>c.classList.toggle('sel',j===i));
+  const a=SOUNDS[i];
+  document.getElementById('adetail').classList.add('show');
+  document.getElementById('abig').textContent=a.l;
+  document.getElementById('asmall').textContent=a.s;
+  document.getElementById('asnd').textContent=a.snd;
+  document.getElementById('atip').textContent=a.tip;
+  document.getElementById('aexs').innerHTML=a.ex.map(e=>{const w=e.w.replace(/'/g,"\\'");return`<div class="aex">
+    <div class="aex-fr">${e.w}</div>
+    <div class="aex-pr">[${e.p}]</div>
+    <div class="aex-ua">${e.u}</div>
+    <button class="speak-btn" onclick="speak('${w}',event)">🔊</button>
+  </div>`;}).join('');
+  document.getElementById('adetail').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+renderVocab();renderSounds();updateAll();
+</script>
+</body>
+</html>
